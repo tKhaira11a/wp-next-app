@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {ToolbarGroup, ToolbarButton, Modal, Button, PanelBody, TextareaControl} from "@wordpress/components";
 import './editor.scss';
 import {__} from "@wordpress/i18n";
-import {edit} from "@wordpress/icons";
+import {gallery} from "@wordpress/icons";
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -95,19 +95,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Settings', 'three-d-marquee-block' ) }>
-					<MediaUpload
-						onSelect={(media) => setAttributes({ images: media })}
-						allowedTypes={['image']}
-						multiple
-						gallery
-						value={attributes.images?.map((img) => img.id)}
-						render={({ open }) => (
-							<Button onClick={open} isSecondary>
-								{attributes.images?.length ? 'Galerie bearbeiten' : 'Galerie wählen'}
-							</Button>
-						)}
-					/>
-
 					<TextareaControl
 						label={ __(
 							'Additional CSS for Element. No selectors!',
@@ -123,7 +110,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			<BlockControls>
 				<ToolbarGroup>
 					<ToolbarButton
-						icon={ edit }
+						icon={ gallery }
 						label="Edit Slide-Content"
 						onClick={ () => setOpen( true ) }
 					/>
