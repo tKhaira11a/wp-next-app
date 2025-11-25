@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/timeline-container",
+	"version": "0.1.0",
+	"title": "Timeline Container",
+	"category": "nextpress-blocks",
+	"description": "A vertical Timeline with Containers.",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"itemIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "timeline-container-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

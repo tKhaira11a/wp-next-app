@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/link-preview",
+	"version": "0.1.0",
+	"title": "Link Preview",
+	"category": "nextpress-blocks",
+	"description": "Hover a link for preview of site",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"label": {
+			"type": "string"
+		},
+		"url": {
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "link-preview-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

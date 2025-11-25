@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/container-scroll-animation",
+	"version": "0.1.0",
+	"title": "Container Scroll Animation",
+	"category": "nextpress-blocks",
+	"description": "Animated Container",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"background": {
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"childIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		},
+		"childContent": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "container-scroll-animation-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

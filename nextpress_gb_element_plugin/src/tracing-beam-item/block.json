@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/tracing-beam-item",
+	"version": "0.1.0",
+	"title": "Tracing Beam Item",
+	"parent": [ "nextpress-block/tracing-beam-container" ],
+	"category": "nextpress-blocks",
+	"description": "Item for Tracing Beam Timeline",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"badge": {
+			"type": "string"
+		},
+		"image": {
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"childIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		},
+		"itemTitle": {
+			"type": "string"
+		},
+		"childContent": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "tracing-beam-item-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

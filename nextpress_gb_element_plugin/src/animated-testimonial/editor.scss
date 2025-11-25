@@ -1,0 +1,27 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-animated-testimonial {
+	min-height: 60px;
+}
+
+button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
+	display: block !important;
+}
+
+.wp-block-nextpress-block-animated-testimonial > .block-editor-inner-blocks > .block-editor-block-list__layout {
+	display: flex;
+}
+
+.wp-block-nextpress-block-animated-testimonial {
+	font-size: 1.2rem;
+}
+
+.wp-block-nextpress-block-testimonial {
+	margin: 0 12px;
+	max-width: 580px;
+	width: 100px;
+}

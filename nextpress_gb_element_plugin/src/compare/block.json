@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/compare",
+	"version": "0.1.0",
+	"title": "Compare",
+	"category": "nextpress-blocks",
+	"description": "Compare",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"firstImage": {
+			"type": "string"
+		},
+		"secondeImage": {
+			"type": "string"
+		},
+		"slidemode": {
+			"type": "string"
+		},
+		"autoplay": {
+			"type": "boolean"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "compare-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

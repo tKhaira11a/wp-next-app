@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/simple-carousel-slide",
+	"version": "0.1.0",
+	"title": "Simple Carousel Slide",
+	"parent": [ "nextpress-block/simple-carousel" ],
+	"category": "nextpress-blocks",
+	"description": "Item for the Carousel.",
+	"example": {},
+	"attributes": {
+		"label": {
+			"type": "string"
+		},
+		"background": {
+			"type": "string"
+		},
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "simple-carousel-slide-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

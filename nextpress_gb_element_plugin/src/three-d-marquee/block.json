@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/three-d-marquee",
+	"version": "0.1.0",
+	"title": "3D Marquee",
+	"category": "nextpress-blocks",
+	"description": "3D Marquee Heroshot",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"images": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "object"
+			}
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "three-d-marquee-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

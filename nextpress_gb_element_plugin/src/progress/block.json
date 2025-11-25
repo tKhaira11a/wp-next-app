@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/progress",
+	"version": "1.0.0",
+	"title": "Progress",
+	"category": "nextpress-blocks",
+	"description": "Progress Bar",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"value": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "progress-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

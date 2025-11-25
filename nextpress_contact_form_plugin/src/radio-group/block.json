@@ -1,0 +1,50 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-form-block/radio-group",
+	"version": "1.0.0",
+	"title": "Radio Group",
+	"category": "nextpress-form-blocks",
+	"description": "Radio-Group",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"label": {
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"fieldName": {
+			"type": "string"
+		},
+		"radioOptions": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			},
+			"default": [
+				{
+					"label":"",
+					"value":""
+				}
+			]
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "radio-group-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

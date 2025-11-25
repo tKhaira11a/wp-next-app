@@ -1,0 +1,56 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/partical-canvas",
+	"version": "0.1.0",
+	"title": "Partical Canvas",
+	"category": "nextpress-blocks",
+	"description": "Canvas with animated particals",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"particleColor": {
+			"type": "string"
+		},
+		"background": {
+			"type": "string"
+		},
+		"interactive": {
+			"type": "boolean"
+		},
+		"speed": {
+			"type": "string"
+		},
+		"density": {
+			"type": "string"
+		},
+		"childIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		},
+		"childContent": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "partical-canvas-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

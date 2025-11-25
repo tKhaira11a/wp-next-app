@@ -1,0 +1,41 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/expandable-card-container",
+	"version": "1.0.0",
+	"title": "Expandable Card Container",
+	"category": "nextpress-blocks",
+	"description": "Animated Container for xpandable Cards",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"listMode": {
+			"type": "string"
+		},
+		"expandableCards": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "expandable-card-container-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

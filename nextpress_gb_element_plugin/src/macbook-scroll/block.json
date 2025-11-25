@@ -1,0 +1,41 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/macbook-scroll",
+	"version": "0.1.0",
+	"title": "Macbook Scroll",
+	"category": "nextpress-blocks",
+	"description": "Scroll Effect of a Macbook-Screen.",
+	"example": {},
+	"attributes": {
+		"boxTitle": {
+			"type": "string"
+		},
+		"src": {
+			"type": "string"
+		},
+		"showGradient": {
+			"type": "boolean"
+		},
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "macbook-scroll-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

@@ -1,0 +1,31 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-hero-parallax {
+	min-height: 60px;
+}
+
+button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
+	display: block !important;
+}
+
+.wp-block-nextpress-block-hero-parallax {
+}
+
+.wp-block-nextpress-block-hero-parallax-prod {
+	width: auto;
+	display: compact;
+	margin: 12px;
+}
+
+.wp-block-nextpress-block-hero-parallax > .block-editor-inner-blocks > .block-editor-block-list__layout{
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+
+}
+.wp-block-nextpress-block-hero-parallax > .block-editor-inner-blocks {
+	width: 100%;
+}

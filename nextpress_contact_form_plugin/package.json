@@ -1,0 +1,45 @@
+{
+	"name": "nextpress-contact-form",
+	"version": "0.1.0",
+	"description": "Contact-Form Elements",
+	"author": "Tarik Khairalla",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"files": [
+		"CPTs",
+		"build",
+		"NextPress-contact_form.php",
+		"register_cpts.php",
+		"readme.txt",
+		"block-icon.png",
+		"editor.js"
+	],
+	"scripts": {
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip && zip -d nextpress-contact-form.zip /nextpress-contact-form/package.json",
+		"start": "wp-scripts start",
+		"env": "wp-env"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.25.0",
+		"@wordpress/scripts": "^30.18.0"
+	},
+	"dependencies": {
+		"@wordpress/block-editor": "^14.20.0",
+		"@wordpress/blocks": "^14.14.0",
+		"@wordpress/components": "^29.11.0",
+		"@wordpress/data": "^10.25.0",
+		"@wordpress/edit-post": "^8.25.0",
+		"@wordpress/element": "^6.25.0",
+		"@wordpress/hooks": "^4.29.0",
+		"@wordpress/i18n": "^5.25.0",
+		"@wordpress/plugins": "^7.25.0",
+		"node-html-parser": "^7.0.1",
+		"react": "^18.3.1",
+		"uuid": "^11.1.0"
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/timeline-item",
+	"version": "0.1.0",
+	"title": "Timeline Item",
+	"parent": [ "nextpress-block/timeline-container" ],
+	"category": "nextpress-blocks",
+	"description": "Item for Timeline",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"childIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		},
+		"itemTitle": {
+			"type": "string"
+		},
+		"childContent": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": false
+		},
+		"html": false,
+		"typography": {
+			"fontSize": false
+		}
+	},
+	"textdomain": "timeline-item-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

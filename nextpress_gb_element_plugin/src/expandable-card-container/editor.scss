@@ -1,0 +1,20 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-nextpress-block-expandable-card-container {
+	min-height: 60px;
+	overflow-y:  scroll;
+	overflow-x: hidden;
+	max-height: 50vh;
+}
+
+button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
+	display: block !important;
+}
+
+div.wp-block-nextpress-block-expandable-card-container > ul {
+	list-style-type:none;
+}

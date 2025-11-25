@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/three-d-pin-card",
+	"version": "0.1.0",
+	"title": "3D Pin-Card",
+	"category": "nextpress-blocks",
+	"description": "Pin-Card with 3D Hover Effect.",
+	"example": {},
+	"attributes": {
+		"header": {
+			"type": "string"
+		},
+		"subHeader": {
+			"type": "string"
+		},
+		"linkLabel": {
+			"type": "string"
+		},
+		"linkUrl": {
+			"type": "string"
+		},
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "Three-D-pin-card-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

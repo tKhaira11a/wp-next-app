@@ -1,0 +1,41 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/np-contact-form",
+	"version": "1.0.0",
+	"title": "Contact Formular",
+	"category": "nextpress-blocks",
+	"description": "Contact-Formular",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"selectedValue": {
+			"type": "object",
+			"default": [
+				{
+					"label":"Unselected",
+					"value":"unselected"
+				}
+			]
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "np-contact-form-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-form-block/date-picker",
+	"version": "1.0.0",
+	"title": "Date Picker",
+	"category": "nextpress-form-blocks",
+	"description": "Date-Picker",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"label": {
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"fieldName": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "date-picker-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

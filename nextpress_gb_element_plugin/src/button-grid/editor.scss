@@ -1,0 +1,23 @@
+.wp-block-nextpress-block-button-grid {
+	min-height: 60px;
+	max-height: 360px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
+	display: block !important;
+}
+
+div.wp-block-nextpress-block-button-grid > ul {
+	list-style-type:none;
+}
+
+div.wp-block-nextpress-block-button-grid .block-editor-inner-blocks > div.block-editor-block-list__layout {
+	display: grid;
+	grid-template-columns: 33.3333% 33.3333% 33.3333%;
+}
+
+ul {
+	list-style-type: none;
+}

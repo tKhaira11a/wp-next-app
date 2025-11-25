@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/sticky-reveal-container",
+	"version": "0.1.0",
+	"title": "Sticky Reveal Container",
+	"category": "nextpress-blocks",
+	"description": "Container with sticky scroll-effekt.",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"itemIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "sticky-reveal-container-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

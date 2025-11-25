@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-form-block/checkbox",
+	"version": "1.0.0",
+	"title": "Checkbox",
+	"category": "nextpress-form-blocks",
+	"description": "Checkbox-Control",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"label": {
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"fieldName": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "checkbox-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

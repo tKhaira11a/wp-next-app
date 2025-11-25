@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/ani-tab-control",
+	"version": "0.1.0",
+	"title": "Animated Tab-Control",
+	"category": "nextpress-blocks",
+	"description": "Control for animated Tabs",
+	"example": {},
+	"attributes": {
+		"cptId": {
+			"type": "number"
+		},
+		"initialIndex": {
+			"type": "number"
+		},
+		"activeTab":{
+			"type": "string"
+		},
+		"instanceId": {
+			"type": "string"
+		},
+		"tabIds": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "ani-tab-control-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./index.css"
+}

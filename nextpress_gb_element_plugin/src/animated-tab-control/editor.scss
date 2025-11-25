@@ -1,0 +1,21 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-nextpress-block-ani-tab-control {
+	min-height: 60px;
+}
+
+button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
+	display: block !important;
+}
+
+.wp-block-nextpress-block-ani-tab-control .aniTab {
+	display: none;
+
+	&.is-tab-active {
+		display: block;
+	}
+}

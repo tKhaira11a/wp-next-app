@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "nextpress-block/testimonial",
+	"version": "0.1.0",
+	"title": "Testimonial",
+	"parent": [ "nextpress-block/animated-testimonial", "nextpress-block/moving-cards"],
+	"category": "nextpress-blocks",
+	"description": "Item for the Animated Testimonial Carousel.",
+	"example": {},
+	"attributes": {
+		"testimonialTitle": {
+			"type": "string"
+		},
+		"quote": {
+			"type": "string"
+		},
+		"testimonialName": {
+			"type": "string"
+		},
+		"position": {
+			"type": "string"
+		},
+		"bild": {
+			"type": "string"
+		},
+		"cptId": {
+			"type": "number"
+		},
+		"instanceId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"color": {
+			"background": false,
+			"text": true
+		},
+		"html": false,
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "testimonial-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}
