@@ -1,9 +1,10 @@
-import {InspectorControls, RichText, useBlockProps} from "@wordpress/block-editor";
-import {Button, PanelBody, SelectControl, TextareaControl, TextControl, ToggleControl} from "@wordpress/components";
+import {BlockControls, InspectorControls, RichText, useBlockProps} from "@wordpress/block-editor";
+import {ToolbarGroup, ToolbarButton, Modal, Button, PanelBody, SelectControl, TextareaControl, TextControl, ToggleControl} from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
+import {edit} from "@wordpress/icons";
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -21,6 +22,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const [editMode, setEditMode] = useState(true);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const [ isOpen, setOpen ] = useState( false );
 
 	useEffect(() => {
 		if (instanceId !== clientId) {
@@ -84,31 +86,31 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	}
 
 
-const updateCptEntry = async () => {
-	if (isPendingUpdate) {
-		return;
-	}
-	setIsPendingUpdate(true);
-	try {
-		const cptName = "select";
-		const postCategory = "postType";
+	const updateCptEntry = async () => {
+		if (isPendingUpdate) {
+			return;
+		}
+		setIsPendingUpdate(true);
+		try {
+			const cptName = "select";
+			const postCategory = "postType";
 
-		const updatedPostReccord = {
-			id: cptId,
-			meta: {
-				label: label,
-				attributes: JSON.stringify(attributes),
-				field_name: fieldName
-			}
-		};
+			const updatedPostReccord = {
+				id: cptId,
+				meta: {
+					label: label,
+					attributes: JSON.stringify(attributes),
+					field_name: fieldName
+				}
+			};
 
-		const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
-	} catch (error) {
-		console.error("Fehler beim Aktualisieren des CPT:", error);
-	} finally {
-		setIsPendingUpdate(false);
+			const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
+		} catch (error) {
+			console.error("Fehler beim Aktualisieren des CPT:", error);
+		} finally {
+			setIsPendingUpdate(false);
+		}
 	}
-}
 
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });
@@ -125,111 +127,6 @@ const updateCptEntry = async () => {
 							handleAttributeChange("fieldName", newValue);
 						}}
 					/>
-					<ToggleControl
-						checked={ editMode }
-						label={ __(
-							'Edit-Mode Classic/Modern',
-							'select-block'
-						) }
-						onChange={ () =>
-							setEditMode( ! editMode )
-						}
-					/>
-					<div
-						style={{
-							display: !editMode ? "block" : "none",
-						}}
-					>
-						<TextareaControl
-							label={__('Options (label:value per line)', 'select-block')}
-							help={__('Each line: label:value', 'select-block')}
-							rows="5"
-							value={selectValues.map(opt => `${opt.label}:${opt.value}`).join("\n")}
-							onChange={(text) => {
-								const lines = text.split("\n");
-								const newValues = lines.map(line => {
-									const parts = line.split(":");
-									if (parts.length >= 2) {
-										return {
-											label: parts[0].trim(),
-											value: parts.slice(1).join(":").trim()
-										};
-									} else if (line.trim()) {
-										return {
-											label: line.trim(),
-											value: ""
-										};
-									} else {
-										return {
-											label: "",
-											value: ""
-										};
-									}
-								});
-								handleAttributeChange("selectValues", newValues);
-							}}
-						/>
-					</div>
-
-					<div
-						style={{
-							display: editMode ? "block" : "none"
-						}}>
-						<div
-							style={{
-								maxHeight: "300px",
-								overflowY: "scroll",
-							}}>
-							{selectValues.map((opt, index) => (
-								<div key={index} style={{ marginBottom: '1rem', borderBottom: '1px solid #ccc', paddingBottom: '0.5rem' }}>
-									<div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-										<div style={{ flex: 1 }}>
-											<TextControl
-												label={__('Label', 'select-block')}
-												value={opt.label}
-												onChange={(newLabel) => {
-													const updated = [...selectValues];
-													updated[index].label = newLabel;
-													handleAttributeChange("selectValues",updated);
-												}}
-											/>
-										</div>
-										<div style={{ flex: 1 }}>
-											<TextControl
-												label={__('Value', 'select-block')}
-												value={opt.value}
-												onChange={(newValue) => {
-													const updated = [...selectValues];
-													updated[index].value = newValue;
-													handleAttributeChange("selectValues",updated);
-												}}
-											/>
-										</div>
-									</div>
-									<Button
-										isDestructive
-										variant="link"
-										onClick={() => {
-											const updated = [...selectValues];
-											updated.splice(index, 1);
-											handleAttributeChange("selectValues",updated);
-										}}
-									>
-										{__('Remove', 'select-block')}
-									</Button>
-								</div>
-							))}
-						</div>
-						<Button
-							variant="primary"
-							onClick={() => {
-								handleAttributeChange("selectValues",[...selectValues, { label: '', value: '' }]);
-							}}
-						>
-							{__('Add Option', 'select-block')}
-						</Button>
-					</div>
-
 					<TextareaControl
 						label={ __(
 							'Additional CSS for Element. No selectors!',
@@ -241,6 +138,16 @@ const updateCptEntry = async () => {
 					/>
 				</PanelBody>
 			</InspectorControls>
+
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={ edit }
+						label="Edit Slide-Content"
+						onClick={ () => setOpen( true ) }
+					/>
+				</ToolbarGroup>
+			</BlockControls>
 			<div {...blockProps} >
 				<RichText
 					tagName="label"
@@ -255,6 +162,123 @@ const updateCptEntry = async () => {
 					options={selectValues}
 					onChange={(value) => setSelectedValue(value ?? "")}
 				/>
+
+				{ isOpen && (
+					<Modal
+						title="Edit Slide-Content"
+						onRequestClose={ () => setOpen( false ) }
+					>
+						<ToggleControl
+							checked={ editMode }
+							label={ __(
+								'Edit-Mode Classic/Modern',
+								'select-block'
+							) }
+							onChange={ () =>
+								setEditMode( ! editMode )
+							}
+						/>
+						<div
+							style={{
+								display: !editMode ? "block" : "none",
+							}}
+						>
+							<TextareaControl
+								label={__('Options (label:value per line)', 'select-block')}
+								help={__('Each line: label:value', 'select-block')}
+								rows="5"
+								value={selectValues.map(opt => `${opt.label}:${opt.value}`).join("\n")}
+								onChange={(text) => {
+									const lines = text.split("\n");
+									const newValues = lines.map(line => {
+										const parts = line.split(":");
+										if (parts.length >= 2) {
+											return {
+												label: parts[0].trim(),
+												value: parts.slice(1).join(":").trim()
+											};
+										} else if (line.trim()) {
+											return {
+												label: line.trim(),
+												value: ""
+											};
+										} else {
+											return {
+												label: "",
+												value: ""
+											};
+										}
+									});
+									handleAttributeChange("selectValues", newValues);
+								}}
+							/>
+						</div>
+
+						<div
+							style={{
+								display: editMode ? "block" : "none"
+							}}>
+							<div
+								style={{
+									maxHeight: "300px",
+									overflowY: "scroll",
+								}}>
+								{selectValues.map((opt, index) => (
+									<div key={index} style={{ marginBottom: '1rem', borderBottom: '1px solid #ccc', paddingBottom: '0.5rem' }}>
+										<div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+											<div style={{ flex: 1 }}>
+												<TextControl
+													label={__('Label', 'select-block')}
+													value={opt.label}
+													onChange={(newLabel) => {
+														const updated = [...selectValues];
+														updated[index].label = newLabel;
+														handleAttributeChange("selectValues",updated);
+													}}
+												/>
+											</div>
+											<div style={{ flex: 1 }}>
+												<TextControl
+													label={__('Value', 'select-block')}
+													value={opt.value}
+													onChange={(newValue) => {
+														const updated = [...selectValues];
+														updated[index].value = newValue;
+														handleAttributeChange("selectValues",updated);
+													}}
+												/>
+											</div>
+										</div>
+										<Button
+											isDestructive
+											variant="link"
+											onClick={() => {
+												const updated = [...selectValues];
+												updated.splice(index, 1);
+												handleAttributeChange("selectValues",updated);
+											}}
+										>
+											{__('Remove', 'select-block')}
+										</Button>
+									</div>
+								))}
+							</div>
+							<Button
+								variant="primary"
+								onClick={() => {
+									handleAttributeChange("selectValues",[...selectValues, { label: '', value: '' }]);
+								}}
+							>
+								{__('Add Option', 'select-block')}
+							</Button>
+						</div>
+						<br />
+						<br />
+						<Button variant="secondary" onClick={ () => setOpen( false ) }>
+							Schließen
+						</Button>
+					</Modal>
+				) }
 			</div>
 		</>
 	);

@@ -1,16 +1,18 @@
-import {InspectorControls, RichText, useBlockProps} from "@wordpress/block-editor";
+import {BlockControls, InspectorControls, RichText, useBlockProps} from "@wordpress/block-editor";
 import {
 	Button, CheckboxControl,
 	PanelBody,
 	RadioControl,
 	TextareaControl,
 	TextControl,
-	ToggleControl
+	ToggleControl,
+	ToolbarGroup, ToolbarButton, Modal
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
+import {edit} from "@wordpress/icons";
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -28,6 +30,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const [hasCreatedCPT, setHasCreatedCPT] = useState(!!cptId);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const [ isOpen, setOpen ] = useState( false );
 
 
 	useEffect(() => {
@@ -133,6 +136,48 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							handleAttributeChange("fieldName", newValue);
 						}}
 					/>
+					<TextareaControl
+						label={ __(
+							'Additional CSS for Element. No selectors!',
+							'radio-block'
+						) }
+						help="CSS-Styles"
+						value={ style.css }
+						onChange={ ( value ) => setAttributes( { style: {css: value }} ) }
+					/>
+				</PanelBody>
+			</InspectorControls>
+
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={ edit }
+						label="Edit Slide-Content"
+						onClick={ () => setOpen( true ) }
+					/>
+				</ToolbarGroup>
+			</BlockControls>
+
+			<div {...blockProps} >
+				<RichText
+					tagName="label"
+					value={label}
+					onChange={(value) => handleAttributeChange('label', value)}
+					placeholder="Radio Group Label"
+				/>
+
+				<RadioControl
+					label={__(label, 'radio-block')}
+					selected={selectedValue}
+					options={radioOptions}
+					onChange={(value) => setSelectedValue(value)}
+				/>
+			</div>
+			{ isOpen && (
+				<Modal
+					title="Edit Slide-Content"
+					onRequestClose={ () => setOpen( false ) }
+				>
 					<ToggleControl
 						checked={ editMode }
 						label={ __(
@@ -255,33 +300,13 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							{__('Add Radio Option', 'radio-block')}
 						</Button>
 					</div>
-
-					<TextareaControl
-						label={ __(
-							'Additional CSS for Element. No selectors!',
-							'radio-block'
-						) }
-						help="CSS-Styles"
-						value={ style.css }
-						onChange={ ( value ) => setAttributes( { style: {css: value }} ) }
-					/>
-				</PanelBody>
-			</InspectorControls>
-			<div {...blockProps} >
-				<RichText
-					tagName="label"
-					value={label}
-					onChange={(value) => handleAttributeChange('label', value)}
-					placeholder="Radio Group Label"
-				/>
-
-				<RadioControl
-					label={__(label, 'radio-block')}
-					selected={selectedValue}
-					options={radioOptions}
-					onChange={(value) => setSelectedValue(value)}
-				/>
-			</div>
+					<br />
+					<br />
+					<Button variant="secondary" onClick={ () => setOpen( false ) }>
+						Schließen
+					</Button>
+				</Modal>
+			) }
 		</>
 	);
 }
