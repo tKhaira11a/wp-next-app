@@ -1,10 +1,11 @@
-import { InspectorControls, MediaUpload, useBlockProps} from '@wordpress/block-editor';
+import { BlockControls, InspectorControls, MediaUpload, useBlockProps} from '@wordpress/block-editor';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { v4 as uuidv4 } from 'uuid';
-import {Button, PanelBody, TextareaControl} from "@wordpress/components";
+import {ToolbarGroup, ToolbarButton, Modal, Button, PanelBody, TextareaControl} from "@wordpress/components";
 import './editor.scss';
 import {__} from "@wordpress/i18n";
+import {edit} from "@wordpress/icons";
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -17,6 +18,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const [isPendingUpdate, setIsPendingUpdate] = useState(false);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const [ isOpen, setOpen ] = useState( false );
 
 	useEffect(() => {
 		if (instanceId !== clientId) {
@@ -117,6 +119,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					/>
 				</PanelBody>
 			</InspectorControls>
+
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={ edit }
+						label="Edit Slide-Content"
+						onClick={ () => setOpen( true ) }
+					/>
+				</ToolbarGroup>
+			</BlockControls>
+
 			<div {...blockProps} >
 				{attributes.images?.length > 0 && (
 					<>
@@ -125,6 +138,33 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						))}
 					</>
 				)}
+
+				{ isOpen && (
+					<Modal
+						title="Edit Slide-Content"
+						onRequestClose={ () => setOpen( false ) }
+					>
+						<p>{__('Hintergrundbild', 'expandable-card-block')}</p>
+						<MediaUpload
+							onSelect={(media) => setAttributes({ images: media })}
+							allowedTypes={['image']}
+							multiple
+							gallery
+							value={attributes.images?.map((img) => img.id)}
+							render={({ open }) => (
+								<Button onClick={open} isSecondary>
+									{attributes.images?.length ? 'Galerie bearbeiten' : 'Galerie wählen'}
+								</Button>
+							)}
+						/>
+
+						<br />
+						<br />
+						<Button variant="secondary" onClick={ () => setOpen( false ) }>
+							Schließen
+						</Button>
+					</Modal>
+				) }
 			</div>
 		</>
 	)
