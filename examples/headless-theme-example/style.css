@@ -1,0 +1,19 @@
+/*
+Theme Name: Headless
+Theme URI: https://example.com
+Author: Your Name
+Author URI: https://example.com
+Description: A minimal theme for headless WordPress with Next.js frontend.
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: headless
+
+This theme is designed to be used with a headless frontend (Next.js).
+It provides minimal styling as all frontend rendering is handled by Next.js.
+*/
+
+/* Minimal admin styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}

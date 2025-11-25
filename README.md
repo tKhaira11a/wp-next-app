@@ -1,93 +1,257 @@
-# WP-Next-App
+# WordPress + Next.js Headless Stack
 
+Ein vollautomatisiertes Docker-Setup für eine Headless WordPress Instanz mit Next.js Frontend.
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## 🏗️ Architektur
 
 ```
-cd existing_repo
-git remote add origin http://git.khairalla-code.com/taxido3/wp-next-app.git
-git branch -M main
-git push -uf origin main
+┌─────────────────────────────────────────────────────────────────┐
+│                        Docker Network                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+│  │   MariaDB    │  │  WordPress   │  │      Next.js         │  │
+│  │   :3306      │──│    :8888     │──│       :3000          │  │
+│  │              │  │   (Headless) │  │   (Frontend)         │  │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Integrate with your tools
+## 📁 Projektstruktur
 
-- [ ] [Set up project integrations](http://git.khairalla-code.com/taxido3/wp-next-app/-/settings/integrations)
+```
+.
+├── docker-compose.yml          # Haupt Docker Compose mit Build-Dockerfile
+├── docker-compose.simple.yml   # Alternative mit Volume-Mounts (kein Build)
+├── WordPress.Dockerfile        # WordPress Image mit Plugin-Builds
+├── build.sh                    # Master Build & Deploy Script
+├── deploy.sh                   # Vereinfachtes Deploy Script
+├── Makefile                    # Make-Befehle für einfache Steuerung
+├── .env.example                # Beispiel Umgebungsvariablen
+├── .env                        # Deine lokale Konfiguration (gitignored)
+├── scripts/
+│   ├── docker-entrypoint-wp.sh # WordPress Custom Entrypoint
+│   ├── setup-wordpress.sh      # WordPress Konfiguration Script
+│   └── wp-cli-setup.sh         # WP-CLI Setup Script
+├── shared/                     # Geteilte Dateien zwischen Containern
+│   └── .env.nextjs             # Generierte Credentials für Next.js
+├── headless/                   # DEIN Headless WordPress Theme (hier reinkopieren)
+├── wp-next-app/                # DEINE Next.js Application (hier reinkopieren)
+├── nextpress_gb_element_plugin/    # DEIN Custom Gutenberg Plugin (hier reinkopieren)
+├── nextpress_contact_form_plugin/  # DEIN Custom Contact Form Plugin (hier reinkopieren)
+├── wp-graphql-jwt-authentication-develop/  # JWT Auth Plugin (hier reinkopieren)
+└── examples/
+    └── headless-theme-example/ # Beispiel Headless Theme
+```
 
-## Collaborate with your team
+**WICHTIG:** Die Verzeichnisse für deine Plugins, Theme und Next.js App sind leer/enthalten nur READMEs. 
+Du musst deine bestehenden Dateien dort hineinkopieren!
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## 🚀 Quick Start
 
-## Test and Deploy
+### 1. Vorbereitung
 
-Use the built-in continuous integration in GitLab.
+```bash
+# Repository/ZIP entpacken
+cd wp-next-app
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+# Umgebungsvariablen erstellen
+cp .env.example .env
+```
 
-***
+### 2. Deine Dateien kopieren
 
-# Editing this README
+**WICHTIG:** Kopiere deine bestehenden Projektdateien in die entsprechenden Verzeichnisse:
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```bash
+# Next.js App
+cp -r /pfad/zu/wp-next-app/* ./wp-next-app/
 
-## Suggestions for a good README
+# Plugins
+cp -r /pfad/zu/nextpress_gb_element_plugin/* ./nextpress_gb_element_plugin/
+cp -r /pfad/zu/nextpress_contact_form_plugin/* ./nextpress_contact_form_plugin/
+cp -r /pfad/zu/wp-graphql-jwt-authentication-develop/* ./wp-graphql-jwt-authentication-develop/
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+# Headless Theme
+cp -r /pfad/zu/headless/* ./headless/
+```
 
-## Name
-Choose a self-explaining name for your project.
+### 3. Konfiguration anpassen (optional)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Bearbeite `.env` und passe die Werte an:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```env
+# Wichtige Einstellungen
+WP_ADMIN_USER=admin
+WP_ADMIN_EMAIL=admin@yourdomain.com
+WP_SITE_URL=http://localhost:8888
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+# Secrets werden automatisch generiert wenn leer
+HEADLESS_SECRET=
+GRAPHQL_JWT_SECRET=
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### 3. Build & Deploy
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```bash
+# Ausführbar machen
+chmod +x build.sh
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+# Alles bauen und starten
+./build.sh build
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Das Script führt automatisch folgende Schritte aus:
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+1. ✅ Generiert fehlende Secrets
+2. ✅ Baut WordPress Image (inkl. Plugin-Builds)
+3. ✅ Startet MariaDB und wartet auf Healthcheck
+4. ✅ Startet WordPress und wartet auf Healthcheck
+5. ✅ Installiert WordPress (Core, Plugins, Theme)
+6. ✅ Erstellt App-User mit Application Password
+7. ✅ Konfiguriert Permalinks und GraphQL
+8. ✅ Erstellt 404-Seite
+9. ✅ Exportiert Credentials für Next.js
+10. ✅ Baut und startet Next.js mit korrekten Credentials
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## 📋 Verfügbare Befehle
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+```bash
+./build.sh build     # Vollständiger Build (Standard)
+./build.sh start     # Bestehende Services starten
+./build.sh stop      # Alle Services stoppen
+./build.sh restart   # Alle Services neustarten
+./build.sh cleanup   # Alles entfernen (Container, Volumes, generierte Dateien)
+./build.sh logs      # Logs aller Services anzeigen
+./build.sh status    # Status aller Services anzeigen
+./build.sh help      # Hilfe anzeigen
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## 🔌 Installierte Plugins
 
-## License
-For open source projects, say how it is licensed.
+### Aus WordPress Plugin Store
+- **WP GraphQL** (`wp-graphql`) - GraphQL API für WordPress
+- **WP GraphQL IDE** (`wp-graphql-ide`) - GraphQL IDE im Admin
+- **Add WPGraphQL SEO** (`add-wpgraphql-seo`) - SEO-Daten via GraphQL
+- **Redirection** (`redirection`) - URL-Weiterleitungen
+- **Yoast SEO** (`wordpress-seo`) - SEO Management
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### Custom Plugins (werden während des Builds kompiliert)
+- **NextPress GB Components** (`nextpress_gb_element_plugin`) - Custom Gutenberg Blocks
+- **NextPress Contact Form** (`nextpress_contact_form_plugin`) - Kontaktformular Elemente
+- **WP GraphQL JWT Authentication** (`wp-graphql-jwt-authentication`) - JWT Auth für GraphQL
+
+## ⚙️ WordPress Konfiguration
+
+Das Setup konfiguriert automatisch:
+
+### wp-config.php Ergänzungen
+```php
+define('HEADLESS_SECRET', '...');
+define('HEADLESS_URL', 'http://localhost:3000');
+define('GRAPHQL_JWT_AUTH_SECRET_KEY', '...');
+define('GRAPHQL_JWT_AUTH_CORS_ENABLE', true);
+define('WP_HOME', 'http://localhost:3000');  // Nach Next.js Start
+```
+
+### Permalink-Struktur
+```
+/%postname%/
+```
+
+### GraphQL Einstellungen
+- ✅ Public Introspection aktiviert
+- ✅ GraphQL Tracing aktiviert
+- ✅ Batch Queries aktiviert
+
+## 🔐 Generierte Credentials
+
+Nach dem Build findest du alle Credentials in:
+
+- **Haupt-Konfiguration**: `.env`
+- **Next.js Umgebung**: `shared/.env.nextjs`
+
+Beispiel `shared/.env.nextjs`:
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_WORDPRESS_API_URL=http://localhost:8888
+NEXT_PUBLIC_WORDPRESS_API_HOSTNAME=localhost
+HEADLESS_SECRET=abc123...
+WP_USER=NextApp-User
+WP_APP_PASS=xxxx xxxx xxxx xxxx xxxx xxxx
+NOT_FOUND_ID=42
+```
+
+## 🌐 Zugriff
+
+Nach erfolgreichem Build:
+
+| Service | URL |
+|---------|-----|
+| Next.js Frontend | http://localhost:3000 |
+| WordPress Admin | http://localhost:8888/wp-admin |
+| GraphQL Endpoint | http://localhost:8888/graphql |
+| GraphQL IDE | http://localhost:8888/wp-admin/admin.php?page=graphql-ide |
+
+## 🔧 Troubleshooting
+
+### WordPress startet nicht
+```bash
+# Logs prüfen
+docker compose logs wordpress
+
+# Container neustarten
+docker compose restart wordpress
+```
+
+### Next.js Build schlägt fehl
+```bash
+# Prüfen ob Credentials generiert wurden
+cat shared/.env.nextjs
+
+# WordPress erreichbar?
+curl http://localhost:8888/graphql
+```
+
+### Plugins werden nicht aktiviert
+```bash
+# In WordPress Container verbinden
+docker compose exec wordpress bash
+
+# WP-CLI verwenden
+wp plugin list --allow-root
+wp plugin activate <plugin-name> --allow-root
+```
+
+### Datenbank-Verbindung fehlgeschlagen
+```bash
+# MariaDB Status prüfen
+docker compose logs mariadb
+
+# Manuell verbinden
+docker compose exec mariadb mysql -uroot -p
+```
+
+## 🏭 Produktion
+
+Für Produktions-Deployments:
+
+1. Ändere Passwörter in `.env`
+2. Setze echte Domain-URLs
+3. Aktiviere SSL/HTTPS
+4. Verwende externe Datenbank
+5. Konfiguriere Reverse Proxy (nginx/traefik)
+
+Beispiel `.env` für Produktion:
+```env
+WP_SITE_URL=https://api.yourdomain.com
+NEXT_PUBLIC_BASE_URL=https://yourdomain.com
+HEADLESS_URL=https://yourdomain.com
+```
+
+## 📝 Lizenz
+
+MIT License
+
+## 👤 Autor
+
+Tarik Khairalla

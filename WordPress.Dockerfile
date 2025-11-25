@@ -1,48 +1,85 @@
-FROM wordpress
+# ============================================
+# WordPress Headless Dockerfile
+# ============================================
+FROM wordpress:latest
 
-# Update apt sources for archived versions of Debian.
+# Build Arguments
+ARG HOST_UID=1000
+ARG HOST_GID=1000
 
-# stretch (https://lists.debian.org/debian-devel-announce/2023/03/msg00006.html)
-RUN touch /etc/apt/sources.list
-RUN sed -i 's|deb.debian.org/debian stretch|archive.debian.org/debian stretch|g' /etc/apt/sources.list
-RUN sed -i 's|security.debian.org/debian-security stretch|archive.debian.org/debian-security stretch|g' /etc/apt/sources.list
-RUN sed -i '/stretch-updates/d' /etc/apt/sources.list
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    less \
+    mariadb-client \
+    unzip \
+    git \
+    nodejs \
+    npm \
+    jq \
+    moreutils \
+    && rm -rf /var/lib/apt/lists/*
 
-# buster (https://lists.debian.org/debian-devel-announce/2025/06/msg00001.html)
-RUN sed -i 's|deb.debian.org/debian buster|archive.debian.org/debian buster|g' /etc/apt/sources.list
-RUN sed -i 's|security.debian.org/debian-security buster/updates|archive.debian.org/debian-security buster/updates|g' /etc/apt/sources.list
-RUN sed -i '/buster-updates/d' /etc/apt/sources.list
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
 
-# Create the host's user so that we can match ownership in the container.
-ARG HOST_USERNAME
-ARG HOST_UID
-ARG HOST_GID
-# When the IDs are already in use we can still safely move on.
-RUN groupadd -o -g $HOST_GID $HOST_USERNAME || true
-RUN useradd -mlo -u $HOST_UID -g $HOST_GID $HOST_USERNAME || true
+# Create wp-cli config to allow root
+RUN mkdir -p /root/.wp-cli && \
+    echo "path: /var/www/html" > /root/.wp-cli/config.yml
 
-# Install any dependencies we need in the container.
+# Create directories for plugins to be built
+WORKDIR /build
 
-# Make sure we're working with the latest packages.
-RUN apt-get clean
-RUN apt-get -qy update
+# Copy plugin sources
+COPY nextpress_gb_element_plugin /build/nextpress_gb_element_plugin
+COPY nextpress_contact_form_plugin /build/nextpress_contact_form_plugin
 
-# Install some basic PHP dependencies.
-RUN apt-get -qy install $PHPIZE_DEPS && touch /usr/local/etc/php/php.ini
+# Copy third-party plugins
+COPY wp-graphql-jwt-authentication-develop /build/wp-graphql-jwt-authentication
 
-# Install git
-RUN apt-get -qy install git
+# Copy headless theme
+COPY headless /build/headless-theme
 
-# Set up sudo so they can have root access.
-RUN apt-get -qy install sudo
-RUN echo "#$HOST_UID ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN echo 'upload_max_filesize = 1G' >> /usr/local/etc/php/php.ini
-RUN echo 'post_max_size = 1G' >> /usr/local/etc/php/php.ini
-RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-RUN export COMPOSER_HASH=`curl -sS https://composer.github.io/installer.sig` && php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$COMPOSER_HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('/tmp/composer-setup.php'); } echo PHP_EOL;"
-RUN php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
-RUN rm /tmp/composer-setup.php
-USER $HOST_UID:$HOST_GID
-ENV PATH="${PATH}:/home/$HOST_USERNAME/.composer/vendor/bin"
-RUN composer global require --dev phpunit/phpunit:"^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0"
-USER root
+# Build NextPress GB Components Plugin
+WORKDIR /build/nextpress_gb_element_plugin
+RUN npm ci && npm run build
+
+# Build NextPress Contact Form Plugin
+WORKDIR /build/nextpress_contact_form_plugin
+RUN npm ci && npm run build
+
+# Create plugin zip files (or prepare directories)
+WORKDIR /build
+
+# Prepare plugins directory structure
+RUN mkdir -p /docker-entrypoint-initwp.d/plugins \
+    && mkdir -p /docker-entrypoint-initwp.d/themes
+
+# Copy built plugins to init directory
+# WICHTIG: Plugin-Ordnernamen müssen mit dem Slug aus der Haupt-PHP-Datei übereinstimmen
+# nextpress_gb_element_plugin -> NextPress-GB-Components.php -> Plugin Name in WP
+# nextpress_contact_form_plugin -> NextPress-contact_form.php -> Plugin Name in WP
+RUN cp -r /build/nextpress_gb_element_plugin /docker-entrypoint-initwp.d/plugins/nextpress_gb_element_plugin \
+    && cp -r /build/nextpress_contact_form_plugin /docker-entrypoint-initwp.d/plugins/nextpress_contact_form_plugin \
+    && cp -r /build/wp-graphql-jwt-authentication /docker-entrypoint-initwp.d/plugins/wp-graphql-jwt-authentication \
+    && cp -r /build/headless-theme /docker-entrypoint-initwp.d/themes/headless
+
+# Copy scripts
+COPY scripts/docker-entrypoint-wp.sh /usr/local/bin/docker-entrypoint-wp.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint-wp.sh
+
+# Clean up build directory
+RUN rm -rf /build
+
+WORKDIR /var/www/html
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html 2>/dev/null || true
+
+EXPOSE 80
+
+# Use custom entrypoint that wraps the original
+ENTRYPOINT ["docker-entrypoint-wp.sh"]
+CMD ["apache2-foreground"]

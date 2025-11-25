@@ -1,44 +1,167 @@
+version: '3.8'
+
 services:
-  mysql:
-    image: 'mariadb:lts'
+  # ============================================
+  # MariaDB Database
+  # ============================================
+  mariadb:
+    image: mariadb:lts
+    container_name: wp-next-mariadb
+    restart: unless-stopped
     ports:
-      - '${WP_ENV_MYSQL_PORT:-}:3306'
+      - '${DB_PORT:-3306}:3306'
     environment:
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-wordpress}
+      MYSQL_USER: ${DB_USER:-wordpress}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
     volumes:
-      - 'mysql:/var/lib/mysql'
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wp-next-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ============================================
+  # WordPress (Headless CMS)
+  # ============================================
   wordpress:
-    depends_on:
-      - mysql
     build:
       context: .
       dockerfile: WordPress.Dockerfile
-      args: &ref_0
-        HOST_USERNAME: khairalla-code
-        HOST_UID: '1001'
-        HOST_GID: '1001'
+      args:
+        - HOST_UID=${HOST_UID:-1000}
+        - HOST_GID=${HOST_GID:-1000}
+    container_name: wp-next-wordpress
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
     ports:
-      - '${WP_ENV_PORT:-8888}:80'
-      - '3000:3000'
+      - '${WP_PORT:-8888}:80'
     environment:
-      APACHE_RUN_USER: '#1001'
-      APACHE_RUN_GROUP: '#1001'
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: password
-      WORDPRESS_DB_NAME: wordpress
-      WP_TESTS_DIR: /wordpress-phpunit
-    volumes: &ref_1
-      - >-
-        /home/khairalla-code/.wp-env/33679512d1dd8454d44878425b22f751/WordPress:/var/www/html
-      - >-
-        /home/khairalla-code/.wp-env/33679512d1dd8454d44878425b22f751/WordPress-PHPUnit/tests/phpunit:/wordpress-phpunit
-      - 'user-home:/home/khairalla-code'
-      - >-
-        /home/khairalla-code/Project-Working-Dir/wp-env/nextpress_gb_components:/var/www/html/wp-content/plugins/nextpress_gb_components
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_NAME: ${DB_NAME:-wordpress}
+      WORDPRESS_TABLE_PREFIX: ${WP_TABLE_PREFIX:-wp_}
+      # Headless Configuration
+      HEADLESS_SECRET: ${HEADLESS_SECRET}
+      HEADLESS_URL: ${HEADLESS_URL:-http://localhost:3000}
+      GRAPHQL_JWT_SECRET: ${GRAPHQL_JWT_SECRET}
+      # App User Configuration
+      APP_USER_NAME: ${APP_USER_NAME:-NextApp-User}
+      APP_USER_EMAIL: ${APP_USER_EMAIL:-nextapp@localhost}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
+      # WordPress Admin
+      WP_ADMIN_USER: ${WP_ADMIN_USER:-admin}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL:-admin@localhost}
+      WP_SITE_TITLE: ${WP_SITE_TITLE:-Headless WordPress}
+      WP_SITE_URL: ${WP_SITE_URL:-http://localhost:8888}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./scripts:/scripts:ro
+      - ./shared:/shared
+    networks:
+      - wp-next-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/wp-admin/install.php", "||", "curl", "-f", "http://localhost/wp-login.php"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  # ============================================
+  # WordPress Setup (Init Container)
+  # ============================================
+  wordpress-setup:
+    build:
+      context: .
+      dockerfile: WordPress.Dockerfile
+      args:
+        - HOST_UID=${HOST_UID:-1000}
+        - HOST_GID=${HOST_GID:-1000}
+    container_name: wp-next-setup
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      WORDPRESS_DB_NAME: ${DB_NAME:-wordpress}
+      # Headless Configuration
+      HEADLESS_SECRET: ${HEADLESS_SECRET}
+      HEADLESS_URL: ${HEADLESS_URL:-http://localhost:3000}
+      GRAPHQL_JWT_SECRET: ${GRAPHQL_JWT_SECRET}
+      # App User Configuration
+      APP_USER_NAME: ${APP_USER_NAME:-NextApp-User}
+      APP_USER_EMAIL: ${APP_USER_EMAIL:-nextapp@localhost}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
+      # WordPress Admin
+      WP_ADMIN_USER: ${WP_ADMIN_USER:-admin}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL:-admin@localhost}
+      WP_SITE_TITLE: ${WP_SITE_TITLE:-Headless WordPress}
+      WP_SITE_URL: ${WP_SITE_URL:-http://localhost:8888}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./scripts:/scripts:ro
+      - ./shared:/shared
+    networks:
+      - wp-next-network
+    entrypoint: ["/bin/bash", "/scripts/setup-wordpress.sh"]
+    restart: "no"
+
+  # ============================================
+  # Next.js Application
+  # ============================================
+  nextjs:
+    build:
+      context: ./wp-next-app
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+        - NEXT_PUBLIC_WORDPRESS_API_URL=${WP_SITE_URL:-http://localhost:8888}
+        - NEXT_PUBLIC_WORDPRESS_API_HOSTNAME=${WP_HOSTNAME:-localhost}
+        - HEADLESS_SECRET=${HEADLESS_SECRET}
+        - WP_USER=${APP_USER_NAME:-NextApp-User}
+        - WP_APP_PASS=${WP_APP_PASS:-placeholder}
+        - NOT_FOUND_ID=${NOT_FOUND_ID:-0}
+        - RESEND_API_KEY=${RESEND_API_KEY}
+    container_name: wp-next-nextjs
+    # Optional: Gleiche User-ID wie auf dem Host für Dateiberechtigungen
+    # user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    restart: unless-stopped
+    depends_on:
+      wordpress-setup:
+        condition: service_completed_successfully
+    ports:
+      - '${NEXTJS_PORT:-3000}:3000'
+    environment:
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_WORDPRESS_API_URL=${WP_SITE_URL:-http://localhost:8888}
+      - NEXT_PUBLIC_WORDPRESS_API_HOSTNAME=${WP_HOSTNAME:-localhost}
+      - HEADLESS_SECRET=${HEADLESS_SECRET}
+      - WP_USER=${APP_USER_NAME:-NextApp-User}
+      - NOT_FOUND_ID=${NOT_FOUND_ID:-0}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+    env_file:
+      - ./shared/.env.nextjs
+    networks:
+      - wp-next-network
+
 volumes:
-  mysql: {}
-  user-home: {}
+  mariadb_data:
+    driver: local
+  wordpress_data:
+    driver: local
+
+networks:
+  wp-next-network:
+    driver: bridge
