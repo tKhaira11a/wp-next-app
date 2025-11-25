@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/khairalla-code-com" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/nextpress_contact_form_plugin" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/nextpress_gb_element_plugin" vcs="Git" />
