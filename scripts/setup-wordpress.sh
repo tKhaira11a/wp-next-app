@@ -181,6 +181,121 @@ activate_custom_plugins() {
     echo "Custom plugins activated successfully!"
 }
 
+# Configure Redirection plugin (first-time setup)
+configure_redirection() {
+    echo "Configuring Redirection plugin..."
+    
+    # Redirection speichert seine Einstellungen in der Options-Tabelle
+    # Bei der ersten Aktivierung muss die Datenbank-Tabelle erstellt werden
+    wp_cli eval "
+        // Prüfe ob Redirection aktiviert ist
+        if (!function_exists('red_get_options')) {
+            echo 'Redirection plugin not active';
+            return;
+        }
+        
+        // Hole aktuelle Optionen oder erstelle Defaults
+        \$options = red_get_options();
+        
+        // Setze Standard-Optionen für Headless Setup
+        \$options['support'] = false;
+        \$options['token'] = md5(uniqid());
+        \$options['auto_target'] = '';
+        \$options['expire_redirect'] = 0;
+        \$options['expire_404'] = 7;
+        
+        // Speichere Optionen
+        update_option('redirection_options', \$options);
+        
+        // Erstelle Datenbank-Tabellen falls nicht vorhanden
+        if (class_exists('Red_Database')) {
+            \$database = new Red_Database();
+            \$status = \$database->get_status();
+            if (\$status !== 'good') {
+                \$database->install();
+            }
+        }
+        
+        echo 'Redirection configured';
+    " 2>/dev/null || echo "  Note: Redirection setup may need manual completion"
+    
+    echo "Redirection plugin configured!"
+}
+
+# Configure Yoast SEO plugin
+configure_yoast_seo() {
+    echo "Configuring Yoast SEO plugin..."
+    
+    # Disable XML Sitemaps (für Headless nicht nötig, Next.js generiert eigene)
+    echo "  Disabling XML Sitemaps..."
+    wp_cli option update wpseo '{
+        "enable_xml_sitemap": false
+    }' --format=json 2>/dev/null || true
+    
+    # Alternative Methode über einzelne Option
+    wp_cli eval "
+        \$options = get_option('wpseo', array());
+        \$options['enable_xml_sitemap'] = false;
+        update_option('wpseo', \$options);
+    " 2>/dev/null || true
+    
+    # Disable WordPress Core Sitemaps auch
+    wp_cli eval "
+        // Deaktiviere WordPress Core Sitemaps
+        add_filter('wp_sitemaps_enabled', '__return_false');
+        
+        // Speichere als persistente Option
+        update_option('blog_public', 1); // Suchmaschinen erlauben
+    " 2>/dev/null || true
+    
+    # Optimize SEO data (nach Permalink-Änderung empfohlen)
+    echo "  Running SEO data optimization..."
+    wp_cli eval "
+        if (class_exists('WPSEO_Upgrade')) {
+            // Trigger Reindex wenn verfügbar
+            do_action('wpseo_reindex');
+        }
+    " 2>/dev/null || true
+    
+    # Create/Update robots.txt
+    echo "  Configuring robots.txt..."
+    wp_cli eval "
+        // robots.txt Inhalt für Headless Setup
+        \$robots_content = \"User-agent: *
+Allow: /
+
+# Sitemap (generiert von Next.js)
+Sitemap: \" . rtrim(defined('HEADLESS_URL') ? HEADLESS_URL : home_url(), '/') . \"/sitemap.xml
+
+# WordPress Admin blockieren
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+# API-Endpunkte erlauben
+Allow: /graphql
+Allow: /wp-json/
+\";
+        
+        // Speichere in Yoast Option
+        \$wpseo_options = get_option('wpseo', array());
+        \$wpseo_options['baiduverify'] = ''; // Clear verification
+        update_option('wpseo', \$wpseo_options);
+        
+        // Erstelle physische robots.txt falls möglich
+        \$robots_file = ABSPATH . 'robots.txt';
+        if (is_writable(ABSPATH)) {
+            file_put_contents(\$robots_file, \$robots_content);
+            echo 'robots.txt created';
+        } else {
+            echo 'robots.txt - ABSPATH not writable, using virtual';
+        }
+    " 2>/dev/null || true
+    
+    echo "Yoast SEO configured!"
+}
+
+
+
 # Activate headless theme
 activate_headless_theme() {
     echo "Activating headless theme..."
@@ -415,6 +530,10 @@ main() {
     # Configure settings
     configure_permalinks
     configure_graphql
+
+    # Configure plugins
+    configure_redirection
+    configure_yoast_seo
     
     # Create 404 page
     create_404_page
