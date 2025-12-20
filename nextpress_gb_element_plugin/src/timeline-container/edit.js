@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import {InnerBlocks, InspectorControls, useBlockProps} from '@wordpress/block-editor';
-import {PanelBody, RangeControl, TextareaControl,} from '@wordpress/components';
+import {PanelBody, TextareaControl,} from '@wordpress/components';
 import {useEffect, useRef, useState} from 'react';
 import './editor.scss';
 import {useDispatch, useSelect} from "@wordpress/data";

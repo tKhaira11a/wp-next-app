@@ -12,7 +12,7 @@
 		"description": {
 			"type": "string"
 		},
-		"title": {
+		"cardTitle": {
 			"type": "string"
 		},
 		"src": {

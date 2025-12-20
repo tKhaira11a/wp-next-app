@@ -10,7 +10,7 @@ import {edit} from "@wordpress/icons";
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {
 		description = '',
-		title = '',
+		cardTitle = '',
 		src = '',
 		ctaText = '',
 		ctaLink = '',
@@ -23,7 +23,7 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
 	const [ isOpen, setOpen ] = useState( false );
-	const [ localTitle, setLocalTitle ] = useState(title);
+	const [ localTitle, setLocalTitle ] = useState(cardTitle);
 	const [ localDescription, setLocalDescription ] = useState(description);
 	const [ localCtaText, setLocalCtaText ] = useState(ctaText);
 
@@ -54,7 +54,7 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		cptId,
 		hasCreatedCPT,
 		description,
-		title,
+		cardTitle,
 		src,
 		ctaText,
 		ctaLink,
@@ -73,7 +73,7 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 				status: 'publish',
 				meta: {
 					description: description,
-					card_title: title,
+					card_title: cardTitle,
 					src: src,
 					cta_text: ctaText,
 					cta_link: ctaLink,
@@ -109,7 +109,7 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 				id: cptId,
 				meta: {
 					description: description,
-					card_title: title,
+					card_title: cardTitle,
 					src: src,
 					cta_text: ctaText,
 					cta_link: ctaLink,
@@ -174,8 +174,8 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 							<td>
 								<RichText
 									tagName="h2"
-									value={title}
-									onChange={(value) => handleAttributeChange('title', value)}
+									value={cardTitle}
+									onChange={(value) => handleAttributeChange('cardTitle', value)}
 									placeholder="Hier Text eingeben..."
 								/>
 								<br/>
@@ -213,7 +213,7 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 								setLocalTitle( value )
 							}
 							onBlur = { () =>
-								handleAttributeChange('title', localTitle )
+								handleAttributeChange('cardTitle', localTitle )
 							}
 						/>
 
