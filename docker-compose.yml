@@ -163,3 +163,4 @@ volumes:
 networks:
   wp-next-network:
     driver: bridge
+

@@ -15,6 +15,7 @@ import {useDispatch} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import dummyCardImg from '../../dummy_card_img.jpg';
 import {edit} from "@wordpress/icons";
+import './editor.scss';
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {

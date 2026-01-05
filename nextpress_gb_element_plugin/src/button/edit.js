@@ -4,6 +4,7 @@ import { __ } from "@wordpress/i18n";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
+import './editor.scss';
 
 export default function Edit({ attributes, setAttributes, clientId  }) {
 	const { url = "", label = "", cptId, instanceId, style = {css : ""}  } = attributes;

@@ -5,6 +5,7 @@ import {useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelect} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import { store as blockEditorStore } from '@wordpress/block-editor';
+import './editor.scss';
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {

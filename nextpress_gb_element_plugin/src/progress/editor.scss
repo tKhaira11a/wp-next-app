@@ -1,0 +1,79 @@
+// Progress Block Editor Styles
+
+.wp-block-nextpress-block-progress {
+	padding: 1rem;
+
+	// Progress Label
+	.progress-label {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
+
+		span {
+			font-size: 0.9rem;
+			font-weight: 500;
+			color: #1a1a2e;
+		}
+
+		.progress-value {
+			color: #864ffe;
+			font-weight: 600;
+		}
+	}
+
+	// Progress Bar Container
+	.progress-bar-container {
+		height: 10px;
+		background: #e5e7eb;
+		border-radius: 10px;
+		overflow: hidden;
+		position: relative;
+	}
+
+	// Progress Bar Fill
+	.progress-bar-fill {
+		height: 100%;
+		background: linear-gradient(90deg, #864ffe 0%, #a78bfa 100%);
+		border-radius: 10px;
+		transition: width 0.5s ease;
+		position: relative;
+
+		// Shine Effect
+		&::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 50%;
+			background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+		}
+	}
+
+	// Multiple Progress Bars
+	&.has-multiple {
+		.progress-item {
+			margin-bottom: 1.25rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+
+// WordPress Range Control Override
+.wp-block-nextpress-block-progress {
+	.components-range-control {
+		.components-range-control__slider {
+			accent-color: #864ffe;
+		}
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-progress {
+		.progress-label span { color: #f8f9fc; }
+		.progress-bar-container { background: #3d3d5c; }
+	}
+}

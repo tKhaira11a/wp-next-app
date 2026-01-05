@@ -1,0 +1,88 @@
+// Accordion Item Block Editor Styles
+
+.wp-block-nextpress-block-accordion-item {
+	// Panel Body Styling wird vom Parent übernommen
+	
+	.components-panel__body {
+		background: #ffffff;
+		border-radius: 8px;
+		border: 1px solid #e5e7eb;
+		margin: 0.5rem 0;
+
+		.components-panel__body-title {
+			button {
+				font-weight: 500;
+				color: #1a1a2e;
+				padding: 0.875rem 1rem;
+				
+				// Accordion Icon
+				svg {
+					fill: #6b7280;
+				}
+
+				&:hover {
+					background: #f8f9fc;
+				}
+			}
+		}
+
+		// Content Area
+		.components-panel__body-content {
+			padding: 0 1rem 1rem;
+
+			.block-editor-inner-blocks {
+				background: #f8f9fc;
+				border-radius: 8px;
+				padding: 1rem;
+				min-height: 80px;
+			}
+		}
+	}
+}
+
+// Inner Block Appender
+.wp-block-nextpress-block-accordion-item {
+	button.block-editor-button-block-appender {
+		background: #ffffff;
+		border: 2px dashed #d1d5db;
+		border-radius: 8px;
+		padding: 0.75rem;
+		margin-top: 0.5rem;
+		width: 100%;
+		transition: all 0.2s ease;
+
+		&:hover {
+			border-color: #864ffe;
+			background: rgba(134, 79, 254, 0.05);
+		}
+	}
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-accordion-item {
+		.components-panel__body {
+			background: #2d2d4a;
+			border-color: #3d3d5c;
+
+			.components-panel__body-title button {
+				color: #f8f9fc;
+
+				&:hover {
+					background: #3d3d5c;
+				}
+			}
+
+			.components-panel__body-content {
+				.block-editor-inner-blocks {
+					background: #1a1a2e;
+				}
+			}
+		}
+
+		button.block-editor-button-block-appender {
+			background: rgba(255, 255, 255, 0.05);
+			border-color: rgba(255, 255, 255, 0.15);
+		}
+	}
+}

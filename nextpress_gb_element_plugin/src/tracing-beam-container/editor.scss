@@ -1,17 +1,101 @@
-/**
- * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
- */
+// Tracing Beam Container Block Editor Styles
+// Moderne Vorschau mit animierter Beam-Linie
 
-.wp-block-tracing-beam-container {
-	min-height: 60px;
+.wp-block-nextpress-block-tracing-beam-container {
+	background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+	padding: 3rem 2rem;
+	border-radius: 20px;
+	min-height: 400px;
+	position: relative;
+	overflow: hidden;
+
+	// Glowing Beam Line (links)
+	&::before {
+		content: '';
+		position: absolute;
+		left: 3rem;
+		top: 3rem;
+		bottom: 3rem;
+		width: 3px;
+		background: linear-gradient(180deg, 
+			transparent 0%, 
+			#864ffe 20%, 
+			#a78bfa 50%, 
+			#864ffe 80%, 
+			transparent 100%
+		);
+		border-radius: 3px;
+		box-shadow: 
+			0 0 10px rgba(134, 79, 254, 0.5),
+			0 0 20px rgba(134, 79, 254, 0.3),
+			0 0 40px rgba(134, 79, 254, 0.2);
+		animation: beamPulse 3s ease-in-out infinite;
+	}
+
+	// Glow Effect
+	&::after {
+		content: '';
+		position: absolute;
+		left: 2rem;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100px;
+		height: 60%;
+		background: radial-gradient(ellipse at left, rgba(134, 79, 254, 0.15) 0%, transparent 70%);
+		pointer-events: none;
+	}
+
+	// Inner Blocks Layout
+	> .block-editor-inner-blocks {
+		position: relative;
+		z-index: 1;
+		padding-left: 4rem;
+		
+		> .block-editor-block-list__layout {
+			display: flex;
+			flex-direction: column;
+			gap: 2rem;
+		}
+	}
 }
 
-button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
-	display: block !important;
+@keyframes beamPulse {
+	0%, 100% {
+		opacity: 0.7;
+		box-shadow: 
+			0 0 10px rgba(134, 79, 254, 0.5),
+			0 0 20px rgba(134, 79, 254, 0.3);
+	}
+	50% {
+		opacity: 1;
+		box-shadow: 
+			0 0 15px rgba(134, 79, 254, 0.7),
+			0 0 30px rgba(134, 79, 254, 0.5),
+			0 0 50px rgba(134, 79, 254, 0.3);
+	}
 }
 
-div.wp-block-tracing-beam-container > ul {
-	list-style-type:none;
+// Block Appender
+.wp-block-nextpress-block-tracing-beam-container {
+	button.components-button.block-list-appender__toggle {
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 48px;
+		margin-top: 1rem;
+		background: rgba(255, 255, 255, 0.05);
+		border: 2px dashed rgba(134, 79, 254, 0.4);
+		border-radius: 12px;
+		transition: all 0.2s ease;
+
+		&:hover {
+			border-color: #864ffe;
+			background: rgba(134, 79, 254, 0.1);
+		}
+
+		svg {
+			fill: #9ca3af;
+		}
+	}
 }

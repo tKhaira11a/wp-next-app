@@ -23,6 +23,28 @@ echo "============================================"
 echo ""
 
 # --------------------------------------------
+# Cleanup stale BuildKit containers
+# --------------------------------------------
+cleanup_buildkit() {
+    echo "Checking for stale BuildKit containers..."
+    
+    # Finde und entferne alle BuildKit Container die mit unserem Projekt zusammenhängen
+    local buildkit_containers=$(docker ps -a --filter "name=buildx_buildkit" --format "{{.Names}}" 2>/dev/null || echo "")
+    
+    if [ -n "$buildkit_containers" ]; then
+        echo "  Found BuildKit containers, cleaning up..."
+        for container in $buildkit_containers; do
+            echo "    Stopping and removing: $container"
+            docker stop "$container" 2>/dev/null || true
+            docker rm -f "$container" 2>/dev/null || true
+        done
+        echo "  BuildKit cleanup complete"
+    else
+        echo "  No stale BuildKit containers found"
+    fi
+}
+
+# --------------------------------------------
 # Load or create environment
 # --------------------------------------------
 load_environment() {
@@ -131,9 +153,6 @@ start_wordpress_stack() {
     echo "Starting Database and WordPress..."
     echo "============================================"
     
-    # Build WordPress image (includes plugin building)
-    echo "Building WordPress image (this may take a while for plugin builds)..."
-    docker compose build wordpress
     
     # Start MariaDB
     echo "Starting MariaDB..."
@@ -155,6 +174,9 @@ start_wordpress_stack() {
     done
     echo "MariaDB is healthy!"
     
+    # Build WordPress image (includes plugin building)
+    echo "Building WordPress image (this may take a while for plugin builds)..."
+    docker compose build wordpress
     # Start WordPress
     echo "Starting WordPress..."
     docker compose up -d wordpress
@@ -194,6 +216,12 @@ run_wordpress_setup() {
         exit 1
     fi
     
+    # Append new environment variables to the generated file
+    echo "" >> "$NEXTJS_ENV"
+    echo "NEXT_PUBLIC_WORDPRESS_API_PROTOCOL=${NEXT_PUBLIC_WORDPRESS_API_PROTOCOL:-http}" >> "$NEXTJS_ENV"
+    echo "NEXT_PUBLIC_WORDPRESS_API_PORT=${NEXT_PUBLIC_WORDPRESS_API_PORT:-80}" >> "$NEXTJS_ENV"
+    echo "NEXT_PUBLIC_WORDPRESS_API_HOSTNAME=${NEXT_PUBLIC_WORDPRESS_API_HOSTNAME:-wp-next-wordpress}" >> "$NEXTJS_ENV"
+
     echo "WordPress setup completed successfully!"
     echo ""
     echo "Generated credentials:"
@@ -227,7 +255,7 @@ read_credentials() {
 }
 
 # --------------------------------------------
-# Build and start Next.js
+# Build and start Next.js with retry logic
 # --------------------------------------------
 build_and_start_nextjs() {
     echo ""
@@ -241,7 +269,10 @@ build_and_start_nextjs() {
     # Export all necessary variables for docker compose
     export NEXT_PUBLIC_BASE_URL="${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}"
     export NEXT_PUBLIC_WORDPRESS_API_URL="${NEXT_PUBLIC_WORDPRESS_API_URL:-http://localhost:8888}"
-    export NEXT_PUBLIC_WORDPRESS_API_HOSTNAME="${NEXT_PUBLIC_WORDPRESS_API_HOSTNAME:-localhost}"
+    export NEXT_PUBLIC_WORDPRESS_API_HOSTNAME="${NEXT_PUBLIC_WORDPRESS_API_HOSTNAME:-wp-next-wordpress}"
+    export NEXT_PUBLIC_WORDPRESS_API_PROTOCOL="${NEXT_PUBLIC_WORDPRESS_API_PROTOCOL:-http}"
+    export NEXT_PUBLIC_WORDPRESS_API_PORT="${NEXT_PUBLIC_WORDPRESS_API_PORT:-80}"
+    export PUBLIC_DOMAIN="${PUBLIC_DOMAIN:-localhost}"
     export WP_APP_PASS
     export NOT_FOUND_ID
     
@@ -249,24 +280,76 @@ build_and_start_nextjs() {
     # Während des Builds ist localhost nicht erreichbar.
     local BUILD_WP_URL="http://wp-next-wordpress:80"
     
-    echo "Building Next.js with credentials..."
-    echo "  Note: Using $BUILD_WP_URL for GraphQL codegen during build"
+    # Retry-Logik für den Build
+    local max_retries=3
+    local retry=0
+    local build_success=false
     
-    # Build mit Netzwerk-Zugriff auf WordPress
-    # Wir verwenden docker build direkt mit --network flag
-    DOCKER_BUILDKIT=0 docker build \
-        --network wp-next-app_wp-next-network \
-        --build-arg NEXT_PUBLIC_BASE_URL="${NEXT_PUBLIC_BASE_URL}" \
-        --build-arg NEXT_PUBLIC_WORDPRESS_API_URL="${BUILD_WP_URL}" \
-        --build-arg NEXT_PUBLIC_WORDPRESS_API_HOSTNAME="wp-next-wordpress" \
-        --build-arg HEADLESS_SECRET="${HEADLESS_SECRET}" \
-        --build-arg WP_USER="${WP_USER}" \
-        --build-arg WP_APP_PASS="${WP_APP_PASS}" \
-        --build-arg NOT_FOUND_ID="${NOT_FOUND_ID}" \
-        --build-arg RESEND_API_KEY="${RESEND_API_KEY}" \
-        -t wp-next-app-nextjs \
-        -f ./wp-next-app/Dockerfile \
-        ./wp-next-app
+    while [ $retry -lt $max_retries ] && [ "$build_success" = false ]; do
+        retry=$((retry + 1))
+        echo "Next.js build attempt $retry/$max_retries..."
+        
+        # Cleanup vor jedem Versuch
+        cleanup_buildkit
+        
+        # Entferne ggf. alten Container
+        docker rm -f wp-next-nextjs 2>/dev/null || true
+        
+        echo "Building Next.js with credentials..."
+        echo "  Note: Using $BUILD_WP_URL for GraphQL codegen during build"
+        
+        # Build mit Netzwerk-Zugriff auf WordPress
+        # DOCKER_BUILDKIT=0 ist nötig für --network flag
+        if DOCKER_BUILDKIT=0 docker build \
+            --network wp-next-app_wp-next-network \
+            --build-arg NEXT_PUBLIC_BASE_URL="${NEXT_PUBLIC_BASE_URL}" \
+            --build-arg NEXT_PUBLIC_WORDPRESS_API_URL="${BUILD_WP_URL}" \
+            --build-arg NEXT_PUBLIC_WORDPRESS_API_HOSTNAME="${NEXT_PUBLIC_WORDPRESS_API_HOSTNAME}" \
+            --build-arg NEXT_PUBLIC_WORDPRESS_API_PROTOCOL="${NEXT_PUBLIC_WORDPRESS_API_PROTOCOL}" \
+            --build-arg NEXT_PUBLIC_WORDPRESS_API_PORT="${NEXT_PUBLIC_WORDPRESS_API_PORT}" \
+            --build-arg PUBLIC_DOMAIN="${PUBLIC_DOMAIN}" \
+            --build-arg HEADLESS_SECRET="${HEADLESS_SECRET}" \
+            --build-arg WP_USER="${WP_USER}" \
+            --build-arg WP_APP_PASS="${WP_APP_PASS}" \
+            --build-arg NOT_FOUND_ID="${NOT_FOUND_ID}" \
+            --build-arg RESEND_API_KEY="${RESEND_API_KEY}" \
+            -t wp-next-app-nextjs \
+            -f ./wp-next-app/Dockerfile \
+            ./wp-next-app; then
+            build_success=true
+            echo "Build successful!"
+        else
+            echo "Build failed on attempt $retry"
+            
+            if [ $retry -lt $max_retries ]; then
+                echo "Waiting 5 seconds before retry..."
+                sleep 5
+                
+                # Flush WordPress caches before retry
+                echo "Flushing WordPress caches..."
+                docker compose exec -T wordpress wp --allow-root cache flush 2>/dev/null || true
+                docker compose exec -T wordpress wp --allow-root transient delete --all 2>/dev/null || true
+            fi
+        fi
+    done
+    
+    if [ "$build_success" = false ]; then
+        echo ""
+        echo "============================================"
+        echo "ERROR: Next.js build failed after $max_retries attempts!"
+        echo "============================================"
+        echo ""
+        echo "Common issues:"
+        echo "  - SEO field not in GraphQL schema (check Yoast + WPGraphQL SEO plugins)"
+        echo "  - GraphQL endpoint not reachable"
+        echo "  - TypeScript errors in your code"
+        echo ""
+        echo "Debug steps:"
+        echo "  1. Check WordPress plugins: http://localhost:8888/wp-admin/plugins.php"
+        echo "  2. Test GraphQL: curl -X POST http://localhost:8888/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{posts{nodes{seo{title}}}}\"}"
+        echo "  3. Check logs: docker compose logs wordpress"
+        exit 1
+    fi
     
     echo "Starting Next.js..."
     # Starte den Container manuell mit den richtigen Runtime-Env-Vars
@@ -277,6 +360,9 @@ build_and_start_nextjs() {
         -e NEXT_PUBLIC_BASE_URL="${NEXT_PUBLIC_BASE_URL}" \
         -e NEXT_PUBLIC_WORDPRESS_API_URL="${NEXT_PUBLIC_WORDPRESS_API_URL}" \
         -e NEXT_PUBLIC_WORDPRESS_API_HOSTNAME="${NEXT_PUBLIC_WORDPRESS_API_HOSTNAME}" \
+        -e NEXT_PUBLIC_WORDPRESS_API_PROTOCOL="${NEXT_PUBLIC_WORDPRESS_API_PROTOCOL}" \
+        -e NEXT_PUBLIC_WORDPRESS_API_PORT="${NEXT_PUBLIC_WORDPRESS_API_PORT}" \
+        -e PUBLIC_DOMAIN="${PUBLIC_DOMAIN}" \
         -e HEADLESS_SECRET="${HEADLESS_SECRET}" \
         -e WP_USER="${WP_USER}" \
         -e WP_APP_PASS="${WP_APP_PASS}" \
@@ -362,6 +448,7 @@ print_status() {
 cleanup() {
     echo ""
     echo "Cleaning up..."
+    cleanup_buildkit
     docker compose down -v
     rm -rf "$SHARED_DIR"
     echo "Cleanup complete"
@@ -393,6 +480,7 @@ main() {
     
     case "${1:-build}" in
         build)
+            cleanup_buildkit  # Cleanup at start
             load_environment
             generate_secrets
             prepare_shared
@@ -433,3 +521,4 @@ main() {
 }
 
 main "$@"
+

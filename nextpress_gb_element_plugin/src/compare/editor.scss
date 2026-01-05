@@ -1,0 +1,104 @@
+// Compare Block Editor Styles
+// Vorschau für Before/After Vergleich
+
+.wp-block-nextpress-block-compare {
+	background: linear-gradient(180deg, #f8f9fc 0%, #f1f3f8 100%);
+	padding: 2rem;
+	border-radius: 20px;
+	position: relative;
+	overflow: hidden;
+
+	// Compare Container
+	.compare-container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		position: relative;
+
+		// Divider Line
+		&::before {
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: 0;
+			bottom: 0;
+			width: 3px;
+			background: linear-gradient(180deg, #864ffe, #a78bfa);
+			transform: translateX(-50%);
+			border-radius: 3px;
+			z-index: 10;
+		}
+	}
+
+	// Image Sides
+	.compare-side {
+		border-radius: 12px;
+		overflow: hidden;
+		min-height: 200px;
+		background: #e5e7eb;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&::after {
+			content: '🖼';
+			font-size: 3rem;
+			opacity: 0.3;
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	// Labels
+	.compare-label {
+		position: absolute;
+		bottom: 1rem;
+		padding: 0.5rem 1rem;
+		background: rgba(0, 0, 0, 0.7);
+		color: #fff;
+		border-radius: 20px;
+		font-size: 0.8rem;
+		font-weight: 500;
+
+		&.before { left: 1rem; }
+		&.after { right: 1rem; }
+	}
+}
+
+// Slider Handle
+.wp-block-nextpress-block-compare .slider-handle {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 48px;
+	height: 48px;
+	background: #ffffff;
+	border-radius: 50%;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 20;
+	cursor: ew-resize;
+
+	&::before {
+		content: '⟷';
+		font-size: 1.25rem;
+		color: #864ffe;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-compare {
+		background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+
+		.compare-side {
+			background: #2d2d4a;
+		}
+	}
+}

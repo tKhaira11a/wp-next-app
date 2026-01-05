@@ -6,6 +6,7 @@ import {useDispatch, useSelect} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import {serialize} from "@wordpress/blocks";
 import { store as blockEditorStore } from '@wordpress/block-editor';
+import './editor.scss';
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {header = '', childContent = '', cptId, instanceId, style = {css : ""} } = attributes;

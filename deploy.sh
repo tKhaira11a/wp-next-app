@@ -116,3 +116,4 @@ echo "  Next.js: http://localhost:${NEXTJS_PORT:-3000}"
 echo ""
 echo "Credentials saved in: shared/.env.nextjs"
 echo "============================================"
+

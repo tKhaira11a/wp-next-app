@@ -181,6 +181,128 @@ activate_custom_plugins() {
     echo "Custom plugins activated successfully!"
 }
 
+# ============================================
+# NEU: Flush und Validierung des GraphQL-Schemas
+# ============================================
+flush_and_validate_graphql_schema() {
+    echo "Flushing and validating GraphQL schema..."
+    
+    # 1. WordPress Objekt-Cache leeren
+    echo "  Clearing object cache..."
+    wp_cli cache flush 2>/dev/null || true
+    
+    # 2. Transients löschen (WPGraphQL cached Schema-Teile hier)
+    echo "  Clearing transients..."
+    wp_cli transient delete --all 2>/dev/null || true
+    
+    # 3. WPGraphQL Schema-Registry neu laden
+    echo "  Refreshing WPGraphQL schema registry..."
+    wp_cli eval "
+        // Force WPGraphQL to rebuild schema
+        if (function_exists('graphql_clear_schema_cache')) {
+            graphql_clear_schema_cache();
+            echo 'Schema cache cleared via graphql_clear_schema_cache()';
+        }
+        
+        // Alternative: Delete the schema transient directly
+        delete_transient('graphql_schema');
+        delete_transient('graphql_schema_types');
+        
+        // Force autoload of all registered types
+        if (class_exists('\WPGraphQL\Registry\TypeRegistry')) {
+            do_action('graphql_register_types');
+            echo ' | Types re-registered';
+        }
+    " 2>/dev/null || true
+    
+    # 4. Kurze Pause um sicherzustellen dass alles initialisiert ist
+    echo "  Waiting for schema to stabilize..."
+    sleep 3
+    
+    # 5. Validierung: Prüfe ob SEO-Feld im Schema vorhanden ist
+    echo "  Validating SEO field in GraphQL schema..."
+    
+    local seo_check=$(wp_cli eval "
+        // Führe eine introspection query aus
+        if (!function_exists('graphql')) {
+            echo 'ERROR: WPGraphQL not available';
+            return;
+        }
+        
+        \$query = '
+            query IntrospectionQuery {
+                __type(name: \"ContentNode\") {
+                    fields {
+                        name
+                    }
+                }
+            }
+        ';
+        
+        \$result = graphql(['query' => \$query]);
+        
+        if (isset(\$result['errors'])) {
+            echo 'ERROR: ' . json_encode(\$result['errors']);
+            return;
+        }
+        
+        \$fields = \$result['data']['__type']['fields'] ?? [];
+        \$field_names = array_column(\$fields, 'name');
+        
+        if (in_array('seo', \$field_names)) {
+            echo 'SUCCESS: seo field found in ContentNode';
+        } else {
+            echo 'WARNING: seo field NOT found. Available fields: ' . implode(', ', \$field_names);
+        }
+    " 2>&1)
+    
+    echo "  Schema validation result: $seo_check"
+    
+    # Wenn SEO nicht gefunden, versuche Plugin-Aktivierung nochmal
+    if [[ "$seo_check" == *"NOT found"* ]] || [[ "$seo_check" == *"ERROR"* ]]; then
+        echo "  Attempting to fix SEO field issue..."
+        
+        # Deaktiviere und reaktiviere add-wpgraphql-seo
+        wp_cli plugin deactivate add-wpgraphql-seo 2>/dev/null || true
+        sleep 1
+        wp_cli plugin activate add-wpgraphql-seo 2>/dev/null || true
+        
+        # Nochmal Cache leeren
+        wp_cli cache flush 2>/dev/null || true
+        wp_cli transient delete --all 2>/dev/null || true
+        
+        sleep 2
+        
+        # Nochmal prüfen
+        local retry_check=$(wp_cli eval "
+            if (!function_exists('graphql')) {
+                echo 'ERROR: WPGraphQL not available';
+                return;
+            }
+            
+            \$query = '{ __type(name: \"ContentNode\") { fields { name } } }';
+            \$result = graphql(['query' => \$query]);
+            \$fields = \$result['data']['__type']['fields'] ?? [];
+            \$field_names = array_column(\$fields, 'name');
+            
+            if (in_array('seo', \$field_names)) {
+                echo 'SUCCESS';
+            } else {
+                echo 'FAILED';
+            }
+        " 2>&1)
+        
+        if [[ "$retry_check" == "SUCCESS" ]]; then
+            echo "  SEO field now available after retry!"
+        else
+            echo "  WARNING: SEO field still not available. Build may fail."
+            echo "  Check that 'Yoast SEO' and 'Add WPGraphQL SEO' are both active."
+        fi
+    fi
+    
+    echo "GraphQL schema validation complete!"
+}
+
 # Configure Redirection plugin (first-time setup)
 configure_redirection() {
     echo "Configuring Redirection plugin..."
@@ -294,14 +416,12 @@ Allow: /wp-json/
     echo "Yoast SEO configured!"
 }
 
-
-
 # Activate headless theme
 activate_headless_theme() {
     echo "Activating headless theme..."
     
-    if wp_cli theme is-installed "headless" 2>/dev/null; then
-        wp_cli theme activate "headless"
+    if wp_cli theme is-installed headless 2>/dev/null; then
+        wp_cli theme activate headless
         echo "Headless theme activated!"
     else
         echo "Warning: Headless theme not found, using default theme"
@@ -521,6 +641,10 @@ main() {
     install_store_plugins
     activate_custom_plugins
     
+    # Configure plugin settings
+    configure_redirection
+    configure_yoast_seo
+    
     # Activate theme
     activate_headless_theme
     
@@ -530,10 +654,12 @@ main() {
     # Configure settings
     configure_permalinks
     configure_graphql
-
-    # Configure plugins
-    configure_redirection
-    configure_yoast_seo
+    
+    # ============================================
+    # KRITISCH: Schema-Flush NACH allen Plugin-Konfigurationen
+    # aber VOR dem Next.js Build
+    # ============================================
+    flush_and_validate_graphql_schema
     
     # Create 404 page
     create_404_page

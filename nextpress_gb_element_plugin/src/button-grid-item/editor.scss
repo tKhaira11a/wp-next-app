@@ -1,0 +1,66 @@
+// Button Grid Item Block Editor Styles
+
+.wp-block-nextpress-block-button-grid-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.75rem 1.25rem;
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+
+	&:hover {
+		border-color: #864ffe;
+		background: rgba(134, 79, 254, 0.05);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(134, 79, 254, 0.15);
+	}
+
+	// Icon
+	.grid-item-icon {
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #864ffe;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	// Label
+	span, .rich-text {
+		font-size: 0.9rem;
+		font-weight: 500;
+		color: #1a1a2e;
+	}
+
+	// Active/Selected State
+	&.is-active,
+	&.is-selected {
+		background: linear-gradient(135deg, #864ffe 0%, #6b3fd4 100%);
+		border-color: transparent;
+		box-shadow: 0 4px 15px rgba(134, 79, 254, 0.35);
+
+		.grid-item-icon { color: #ffffff; }
+		span, .rich-text { color: #ffffff; }
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-button-grid-item {
+		background: #2d2d4a;
+		border-color: #3d3d5c;
+
+		span, .rich-text { color: #f8f9fc; }
+
+		&:hover {
+			background: rgba(134, 79, 254, 0.15);
+		}
+	}
+}

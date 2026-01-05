@@ -1,5 +1,3 @@
-version: '3.8'
-
 # ============================================
 # WordPress + Next.js Headless Stack
 # Alternative mit Init-Container Pattern
@@ -222,3 +220,4 @@ volumes:
 networks:
   wp-next-network:
     driver: bridge
+

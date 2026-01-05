@@ -1,4 +1,5 @@
 import {BlockControls, InspectorControls, RichText, useBlockProps} from "@wordpress/block-editor";
+import './editor.scss';
 import {
 	ToolbarGroup,
 	ToolbarButton,
@@ -10,6 +11,7 @@ import {
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useEffect, useRef, useState } from "react";
+import './editor.scss';
 import { useDispatch } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import {edit} from "@wordpress/icons";

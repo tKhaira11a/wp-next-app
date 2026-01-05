@@ -1,0 +1,94 @@
+// Hero Parallax Product Block Editor Styles
+
+.wp-block-nextpress-block-hero-parallax-product {
+	background: #ffffff;
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	transition: all 0.4s ease;
+	transform-style: preserve-3d;
+
+	&:hover {
+		transform: translateY(-8px) rotateX(2deg);
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+	}
+
+	// Product Image
+	> div[style*="backgroundImage"],
+	.product-image {
+		min-height: 200px;
+		background-size: cover !important;
+		background-position: center !important;
+		position: relative;
+
+		// Gradient Overlay
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 50%;
+			background: linear-gradient(transparent, rgba(0,0,0,0.3));
+		}
+	}
+
+	// Product Info
+	.product-info {
+		padding: 1.25rem;
+	}
+
+	// Title
+	h4, .product-title {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: #1a1a2e;
+		margin-bottom: 0.5rem;
+	}
+
+	// Link
+	a, .product-link {
+		color: #864ffe;
+		font-size: 0.9rem;
+		font-weight: 500;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&::after {
+			content: '→';
+			transition: transform 0.2s ease;
+		}
+
+		&:hover::after {
+			transform: translateX(4px);
+		}
+	}
+}
+
+// Thumbnail Placeholder
+.wp-block-nextpress-block-hero-parallax-product .product-image:empty {
+	background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&::before {
+		content: '🖼';
+		font-size: 3rem;
+		opacity: 0.3;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-hero-parallax-product {
+		background: #2d2d4a;
+
+		h4, .product-title { color: #f8f9fc; }
+	}
+}

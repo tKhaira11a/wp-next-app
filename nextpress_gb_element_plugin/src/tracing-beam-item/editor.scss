@@ -1,4 +1,76 @@
-.wp-block-nextpress-block-tracing-beam-item .rich-text [data-rich-text-placeholder]::after,
+// Tracing Beam Item Block Editor Styles
+
 .wp-block-nextpress-block-tracing-beam-item {
-	color: darkgray;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 16px;
+	padding: 1.5rem;
+	position: relative;
+	transition: all 0.3s ease;
+
+	// Beam Connection Dot
+	&::before {
+		content: '';
+		position: absolute;
+		left: -2.5rem;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 12px;
+		height: 12px;
+		background: #864ffe;
+		border-radius: 50%;
+		box-shadow: 0 0 10px rgba(134, 79, 254, 0.6);
+	}
+
+	// Connection Line
+	&::after {
+		content: '';
+		position: absolute;
+		left: -1.9rem;
+		top: 50%;
+		width: 1.5rem;
+		height: 2px;
+		background: linear-gradient(90deg, rgba(134, 79, 254, 0.6), transparent);
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(134, 79, 254, 0.3);
+		transform: translateX(4px);
+	}
+
+	// Inner Content
+	.block-editor-inner-blocks {
+		min-height: 60px;
+	}
+
+	// Text Colors
+	h1, h2, h3, h4, h5, h6 {
+		color: #f8f9fc;
+	}
+
+	p, span, .rich-text {
+		color: #9ca3af;
+	}
+
+	.rich-text [data-rich-text-placeholder]::after {
+		color: #6b7280;
+		font-style: italic;
+	}
+}
+
+// Focus State
+.wp-block-nextpress-block-tracing-beam-item:focus-within {
+	border-color: rgba(134, 79, 254, 0.5);
+	box-shadow: 0 0 20px rgba(134, 79, 254, 0.15);
+}
+
+// Selected State
+.wp-block-nextpress-block-tracing-beam-item.is-selected {
+	border-color: #864ffe;
+	
+	&::before {
+		box-shadow: 0 0 15px rgba(134, 79, 254, 0.8), 0 0 30px rgba(134, 79, 254, 0.4);
+	}
 }

@@ -1,17 +1,77 @@
-/**
- * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
- */
+// Timeline Container Block Editor Styles
+// Moderne Vorschau für Timeline-Komponente
 
-.wp-block-timeline-container {
-	min-height: 60px;
+.wp-block-nextpress-block-timeline-container {
+	background: linear-gradient(180deg, #f8f9fc 0%, #f1f3f8 100%);
+	padding: 2.5rem 2rem;
+	border-radius: 20px;
+	min-height: 300px;
+	position: relative;
+
+	// Vertikale Timeline-Linie
+	&::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 2.5rem;
+		bottom: 2.5rem;
+		width: 2px;
+		background: linear-gradient(180deg, #864ffe 0%, #d4c4ff 100%);
+		transform: translateX(-50%);
+		border-radius: 2px;
+		z-index: 0;
+	}
+
+	// Inner Blocks Layout
+	> .block-editor-inner-blocks > .block-editor-block-list__layout {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		position: relative;
+		z-index: 1;
+	}
 }
 
-button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
-	display: block !important;
+// Block Appender
+.wp-block-nextpress-block-timeline-container {
+	button.components-button.block-list-appender__toggle {
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+		margin: 1.5rem auto 0;
+		background: #ffffff;
+		border: 2px dashed #d1d5db;
+		border-radius: 50%;
+		transition: all 0.2s ease;
+		position: relative;
+		z-index: 2;
+
+		&:hover {
+			border-color: #864ffe;
+			background: rgba(134, 79, 254, 0.05);
+			transform: scale(1.1);
+		}
+
+		svg {
+			fill: #6b7280;
+		}
+	}
 }
 
-div.wp-block-timeline-container > ul {
-	list-style-type:none;
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-timeline-container {
+		background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+
+		&::before {
+			background: linear-gradient(180deg, #864ffe 0%, #4a3a8a 100%);
+		}
+
+		button.components-button.block-list-appender__toggle {
+			background: rgba(255, 255, 255, 0.05);
+			border-color: rgba(255, 255, 255, 0.2);
+		}
+	}
 }

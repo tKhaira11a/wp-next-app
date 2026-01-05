@@ -1,0 +1,51 @@
+// Carousel Slide Block Editor Styles
+
+.wp-block-nextpress-block-carousel-slide {
+	background: #ffffff;
+	border-radius: 16px;
+	padding: 1.5rem;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+	border: 1px solid #e5e7eb;
+	min-height: 200px;
+	transition: all 0.3s ease;
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+	}
+
+	// Image Container
+	> div[style*="backgroundImage"] {
+		border-radius: 12px;
+		min-height: 150px;
+		background-size: cover !important;
+		background-position: center !important;
+	}
+
+	// Text Content
+	h3, h4, h5 {
+		font-weight: 600;
+		color: #1a1a2e;
+		margin: 1rem 0 0.5rem;
+	}
+
+	p, span {
+		color: #6b7280;
+		line-height: 1.6;
+	}
+}
+
+.wp-block-nextpress-block-carousel-slide.is-selected {
+	border-color: #864ffe;
+	box-shadow: 0 0 0 2px rgba(134, 79, 254, 0.2), 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+	.wp-block-nextpress-block-carousel-slide {
+		background: #2d2d4a;
+		border-color: #3d3d5c;
+
+		h3, h4, h5 { color: #f8f9fc; }
+		p, span { color: #9ca3af; }
+	}
+}
