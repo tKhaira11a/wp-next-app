@@ -17,30 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 class CAC_Custom_CSS_Plugin {
-
-	/**
-	 * Option key used to store the CSS in wp_options.
-	 */
 	const OPTION = 'cac_custom_css';
 
 	public function __construct() {
-		// Admin menu item (Appearance → Custom CSS)
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
-
-		// Register the setting so WordPress handles save/restore & capability checks
 		add_action( 'admin_init', [ $this, 'register_setting' ] );
-
-		// Print the CSS in the <head> on the front‑end (and in Customizer preview)
 		add_action( 'wp_head', [ $this, 'print_css_inline' ], 100 );
-
-		// Create a panel in the Customizer
 		add_action( 'customize_register', [ $this, 'customizer_register' ] );
 		add_action( 'customize_preview_init', [ $this, 'customizer_live_preview' ] );
 	}
 
-	/**
-	 * Add a submenu under Appearance → Custom CSS
-	 */
 	public function add_menu() {
 		add_theme_page(
 			__( 'Custom CSS', 'cac' ),
@@ -51,9 +37,6 @@ class CAC_Custom_CSS_Plugin {
 		);
 	}
 
-	/**
-	 * Register the setting so it appears in the Settings API.
-	 */
 	public function register_setting() {
 		register_setting(
 			'cac_options_group',
@@ -62,21 +45,14 @@ class CAC_Custom_CSS_Plugin {
 				'type'              => 'string',
 				'sanitize_callback' => [ $this, 'sanitize_css' ],
 				'default'           => '',
-				// The capability is enforced by our admin menu (edit_theme_options)
 			]
 		);
 	}
 
-	/**
-	 * Basic sanitization – strips HTML tags. Remove this if you want to allow @import etc.
-	 */
 	public function sanitize_css( $css ) {
 		return wp_strip_all_tags( $css );
 	}
 
-	/**
-	 * Render the settings page.
-	 */
 	public function render_page() {
 		?>
 		<div class="wrap">
@@ -93,35 +69,28 @@ class CAC_Custom_CSS_Plugin {
 		<?php
 	}
 
-	/**
-	 * Output the saved CSS in the front‑end <head> section.
-	 */
 	public function print_css_inline() {
 		$css = trim( get_option( self::OPTION ) );
 		if ( $css ) {
-			echo '<style id="cac-custom-css">' . wp_strip_all_tags( $css ) . '</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<style id="cac-custom-css">' . wp_strip_all_tags( $css ) . '</style>' . "\n";
 		}
 	}
 
-	/**
-	 * Add a section + control to the Customizer (Appearance → Customise).
-	 */
 	public function customizer_register( $wp_customize ) {
 		$wp_customize->add_section( 'cac_custom_css_section', [
 			'title'    => __( 'Custom CSS (Plugin)', 'cac' ),
-			'priority' => 160, // Right after "Additional CSS"
+			'priority' => 160,
 		] );
 
 		$wp_customize->add_setting( self::OPTION, [
 			'default'           => '',
-			'type'              => 'option', // Store in wp_options to reuse the same value
+			'type'              => 'option',
 			'capability'        => 'edit_theme_options',
-			'transport'         => 'postMessage', // Live preview
+			'transport'         => 'postMessage',
 			'sanitize_callback' => [ $this, 'sanitize_css' ],
 		] );
 
 		if ( class_exists( 'WP_Customize_Code_Editor_Control' ) ) {
-			// Use the syntax‑highlighting code editor when available (WP 4.9+)
 			$wp_customize->add_control( new WP_Customize_Code_Editor_Control( $wp_customize, 'cac_custom_css_control', [
 				'label'     => __( 'Custom CSS', 'cac' ),
 				'section'   => 'cac_custom_css_section',
@@ -129,7 +98,6 @@ class CAC_Custom_CSS_Plugin {
 				'code_type' => 'text/css',
 			] ) );
 		} else {
-			// Fallback: simple textarea
 			$wp_customize->add_control( 'cac_custom_css_control', [
 				'label'    => __( 'Custom CSS', 'cac' ),
 				'type'     => 'textarea',
@@ -139,11 +107,7 @@ class CAC_Custom_CSS_Plugin {
 		}
 	}
 
-	/**
-	 * Ensure the Customizer preview gets updated with our CSS.
-	 */
 	public function customizer_live_preview() {
-		// Re‑run print_css_inline() *after* the theme's styles so ours can override.
 		add_action( 'wp_head', [ $this, 'print_css_inline' ], 101 );
 	}
 }
@@ -151,13 +115,6 @@ class CAC_Custom_CSS_Plugin {
 require_once(__DIR__.'/register_cpts.php');
 
 
-/**
- * Registers the block using the metadata loaded from the `block.json` file.
- * Behind the scenes, it registers also all assets so they can be enqueued
- * through the block editor in the corresponding context.
- *
- * @see https://developer.wordpress.org/reference/functions/register_block_type/
- */
 function create_block_nextpress_components_init() {
 	register_block_type( __DIR__ . '/build/textgenerate-effekt' );
 	register_block_type( __DIR__ . '/build/button-grid' );
