@@ -1,84 +1,236 @@
 <?php
-	require_once(__DIR__.'/CPTs/animated-testimonial.php');
-	require_once(__DIR__.'/CPTs/background-boxes.php');
-	require_once(__DIR__.'/CPTs/button-grid.php');
-	require_once(__DIR__.'/CPTs/carousel.php');
-	require_once(__DIR__.'/CPTs/carousel-slide.php');
-	require_once(__DIR__.'/CPTs/compare.php');
-	require_once(__DIR__.'/CPTs/hero-parallax.php');
-	require_once(__DIR__.'/CPTs/hero-parallax-product.php');
-	require_once(__DIR__.'/CPTs/list-item.php');
-	require_once(__DIR__.'/CPTs/partical-canvas.php');
-	require_once(__DIR__.'/CPTs/testimonial.php');
-	require_once(__DIR__.'/CPTs/textgenerate-effekt.php');
-	require_once(__DIR__.'/CPTs/accordion.php');
-	require_once(__DIR__.'/CPTs/accordion-item.php');
-	require_once(__DIR__.'/CPTs/button.php');
-	require_once(__DIR__.'/CPTs/simple-carousel.php');
-	require_once(__DIR__.'/CPTs/simple-carousel-slide.php');
-	require_once(__DIR__.'/CPTs/progress.php');
-	require_once(__DIR__.'/CPTs/collapsible.php');
-	require_once(__DIR__.'/CPTs/three-d-card.php');
-	require_once(__DIR__.'/CPTs/three-d-marquee.php');
-	require_once(__DIR__.'/CPTs/three-d-pin-card.php');
-	require_once(__DIR__.'/CPTs/container-scroll-animation.php');
-	require_once(__DIR__.'/CPTs/expandable-card-container.php');
-	require_once(__DIR__.'/CPTs/expandable-card.php');
-	require_once(__DIR__.'/CPTs/link-preview.php');
-	require_once(__DIR__.'/CPTs/moving-cards.php');
-	require_once(__DIR__.'/CPTs/text-reveal-card.php');
-	require_once(__DIR__.'/CPTs/parallax-grid.php');
-	require_once(__DIR__.'/CPTs/animated-tab-control.php');
-	require_once(__DIR__.'/CPTs/animated-tab.php');
-	require_once(__DIR__.'/CPTs/macbook-scroll.php');
-	require_once(__DIR__.'/CPTs/timeline-container.php');
-	require_once(__DIR__.'/CPTs/timeline-item.php');
-	require_once(__DIR__.'/CPTs/tracing-beam-container.php');
-	require_once(__DIR__.'/CPTs/tracing-beam-item.php');
-	require_once(__DIR__.'/CPTs/sticky-reveal-container.php');
-	require_once(__DIR__.'/CPTs/sticky-reveal-item.php');
+	require_once(__DIR__.'/CPTs/register_new_cpt.php');
 
 	function register_block_cpts() {
-		register_textgenerate_effekt();
-		register_list_item();
-		register_button_grid();
-		register_partical_canvas();
-		register_background_boxes();
-		register_animated_testimonial();
-		register_testimonial();
-		register_compare();
-		register_hero_parallax();
-		register_hero_parallax_product();
-		register_carousel();
-		register_carousel_slide();
-		register_accordion();
-		register_accordion_item();
-		register_button();
-		register_simple_carousel();
-		register_simple_carousel_slide();
-		register_progress();
-		register_collapsible();
-		register_three_d_card();
-		register_three_d_marquee();
-		register_three_d_pin_card();
-		register_container_scroll_animation();
-		register_expandable_card_container();
-		register_expandable_card();
-		register_link_preview();
-		register_moving_cards();
-		register_text_reveal_card();
-		register_parallax_grid();
-		register_ani_tab_control();
-		register_animated_tab();
-		register_macbook_scroll();
-		register_timeline_container();
-		register_timeline_item();
-		register_tracing_beam_container();
-		register_tracing_beam_item();
-		register_sticky_reveal_container();
-		register_sticky_reveal_item();
+		$cpt_dictonary = [
+			'Background Boxes' => [
+				'child_ids' => 'string',
+				'child_content' => 'number',
+				'attributes' => 'string'
+			],
+			'Link Preview' => [
+				'label' => 'string',
+				'url' => 'string',
+				'attributes' => 'string'
+			],
+			'Button Grid' => [
+				'list_item_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Carousel' => [
+				'slide_ids' => 'string',
+				'initial_index' => 'number',
+				'attributes' => 'string'
+			],
+			'Carousel Slide' => [
+				'button_label' => 'string',
+				'label' => 'string',
+				'background' => 'string',
+				'attributes' => 'string'
+			],
+			'Compare' => [
+				'first_image' => 'string',
+				'second_image' => 'string',
+				'slidemode' => 'string',
+				'autoplay' => 'boolean',
+				'attributes' => 'string'
+			],
+			'Parallax Heroshot' => [
+				'product_list_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Hero Parallax Product' => [
+				'url' => 'string',
+				'label' => 'string',
+				'background' => 'string',
+				'attributes' => 'string'
+			],
+			'List Item' => [
+				'url' => 'string',
+				'label' => 'string',
+				'attributes' => 'string'
+			],
+			'Partical Canvas' => [
+				'child_ids' => 'string',
+				'attributes' => 'string',
+				'particle_color' => 'string',
+				'background' => 'string',
+				'interactive' => 'boolean',
+				'speed' => 'string',
+				'density' => 'string',
+				'child_content' => 'string'
+			],
+			'Testimonial' => [
+				'quote' => 'string',
+				'testimonial_name' => 'string',
+				'testimonial_title' => 'string',
+				'position' => 'string',
+				'bild' => 'string',
+				'attributes' => 'string'
+			],
+			'Textgen Effekt' => [
+				'duration' => 'number',
+				'words' => 'string',
+				'attributes' => 'string'
+			],
+			'Accordion Item' => [
+				'header' => 'string',
+				'child_content' => 'string',
+				'attributes' => 'string'
+			],
+			'Accordion' => [
+				'accordion_items' => 'string',
+				'attributes' => 'string'
+			],
+			'Simple Carousel' => [
+				'slide_ids' => 'string',
+				'initial_index' => 'number',
+				'attributes' => 'string'
+			],
+			'S Carousel Slide' => [
+				'background' => 'string',
+				'label' => 'string',
+				'attributes' => 'string'
+			],
+			'Progress' => [
+				'value' => 'string',
+				'attributes' => 'string'
+			],
+			'Button' => [
+				'url' => 'string',
+				'label' => 'string',
+				'attributes' => 'string'
+			],
+			'Sticky Reveal Item' => [
+				'item_title' => 'string',
+				'description' => 'string',
+				'child_content' => 'string',
+				'child_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Sticky Reveal Container' => [
+				'item_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Tracing Beam Item' => [
+				'badge' => 'string',
+				'image' => 'string',
+				'item_title' => 'string',
+				'child_content' => 'string',
+				'child_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Tracing Beam Container' => [
+				'item_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Timeline Item' => [
+				'item_title' => 'string',
+				'child_content' => 'string',
+				'child_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Timeline Container' => [
+				'item_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Macbook Scroll' => [
+				'box_title' => 'string',
+				'src' => 'string',
+				'show_gradient' => 'boolean',
+				'attributes' => 'string'
+			],
+			'Animated Tab' => [
+				'child_ids' => 'string',
+				'tab_title' => 'string',
+				'tab_value' => 'string',
+				'child_content' => 'string',
+				'attributes' => 'string'
+			],
+			'Animated Tab-Control' => [
+				'tab_ids' => 'string',
+				'attributes' => 'string'
+			],
+			'Animated Testimonial' => [
+				'testimonial_list' => 'string',
+				'attributes' => 'string'
+			],
+			'Text Reveal Card' => [
+				'text' => 'string',
+				'reveal_text' => 'string',
+				'card_title' => 'string',
+				'card_description' => 'string',
+				'attributes' => 'string'
+			],
+			'Moving Cards' => [
+				'testimonial_list' => 'string',
+				'direction' => 'string',
+				'speed' => 'string',
+				'pause_on_hover' => 'boolean',
+				'attributes' => 'string'
+			],
+			'Parallax Grid' => [
+				'label' => 'string',
+				'url' => 'string',
+				'attributes' => 'string'
+			],
+			'Expandable Card' => [
+				'description' => 'string',
+				'card_title' => 'string',
+				'src' => 'string',
+				'cta_text' => 'string',
+				'cta_link' => 'string',
+				'card_content' => 'string',
+				'attributes' => 'string'
+			],
+			'Expandable Card Container' => [
+				'expandable_cards' => 'string',
+				'list_mode' => 'string',
+				'attributes' => 'string'
+			],
+			'Container Scroll Animation' => [
+				'child_ids' => 'string',
+				'background' => 'string',
+				'child_content' => 'string',
+				'attributes' => 'string'
+			],
+			'Three D Card' => [
+				'header' => 'string',
+				'sub_header' => 'string',
+				'background' => 'string',
+				'link_url' => 'string',
+				'link_lable' => 'string',
+				'skew' => 'boolean',
+				'button_label' => 'string',
+				'button_url' => 'string',
+				'attributes' => 'string'
+			],
+			'Three D Marquee' => [
+				'images' => 'string',
+				'attributes' => 'string'
+			],
+			'Three D Pin-Card' => [
+				'header' => 'string',
+				'sub_header' => 'string',
+				'link_url' => 'string',
+				'link_label' => 'boolean',
+				'attributes' => 'string'
+			],
+			'Collapsible' => [
+				'trigger_label' => 'string',
+				'child_content' => 'string',
+				'attributes' => 'string'
+			]
+		];
+
+		foreach($cpt_dictonary as $cptName => $customFields) {
+			register_new_CPT($cptName, $customFields);
+		}
 	}
 	add_action('init', 'register_block_cpts');
+
+
+
 
 /* TESTESTESTESTESTETSTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTESTEST
 add_action( 'graphql_register_types', function() {
