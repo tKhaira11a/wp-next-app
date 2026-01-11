@@ -1,3 +1,74 @@
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 // Text Generate Effect Block Editor Styles
 
 .wp-block-nextpress-block-textgenerate-effekt {
@@ -28,10 +99,10 @@
 		text-align: center;
 
 		// Character-by-character reveal simulation
-		background: linear-gradient(90deg, 
-			#ffffff 0%, 
-			#ffffff 50%, 
-			rgba(255,255,255,0.3) 50%, 
+		background: linear-gradient(90deg,
+			#ffffff 0%,
+			#ffffff 50%,
+			rgba(255,255,255,0.3) 50%,
 			rgba(255,255,255,0.3) 100%
 		);
 		background-size: 200% 100%;
@@ -69,11 +140,11 @@
 }
 
 @keyframes typingDot {
-	0%, 80%, 100% { 
+	0%, 80%, 100% {
 		transform: scale(0.6);
 		opacity: 0.5;
 	}
-	40% { 
+	40% {
 		transform: scale(1);
 		opacity: 1;
 	}

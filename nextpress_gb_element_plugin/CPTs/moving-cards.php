@@ -4,7 +4,7 @@ function register_moving_cards() {
 	register_post_type('moving_cards',
 		array(
 			'labels'      => array(
-				'name'          => __('Animated Testimonial', 'textdomain'),
+				'name'          => __('Moving Cards', 'textdomain'),
 				'singular_name' => __('Animated Testimonial', 'textdomain'),
 			),
 			'public'             => true,

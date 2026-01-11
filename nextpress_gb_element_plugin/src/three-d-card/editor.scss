@@ -1,3 +1,74 @@
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 // 3D Card Block Editor Styles
 // Moderne Vorschau mit 3D-Effekt
 
@@ -10,7 +81,7 @@
 		border-radius: 20px;
 		border: none;
 		overflow: hidden;
-		box-shadow: 
+		box-shadow:
 			0 10px 40px rgba(0, 0, 0, 0.15),
 			0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 		transition: transform 0.4s ease, box-shadow 0.4s ease;
@@ -18,7 +89,7 @@
 
 		&:hover {
 			transform: rotateY(-5deg) rotateX(5deg) translateZ(10px);
-			box-shadow: 
+			box-shadow:
 				20px 20px 60px rgba(0, 0, 0, 0.2),
 				0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 		}
@@ -124,7 +195,7 @@
 
 // Selected State
 .wp-block-nextpress-block-three-d-card.is-selected .components-card {
-	box-shadow: 
+	box-shadow:
 		0 0 0 3px #864ffe,
 		0 10px 40px rgba(134, 79, 254, 0.3);
 }
