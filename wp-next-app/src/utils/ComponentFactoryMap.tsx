@@ -63,7 +63,8 @@ import ButtonGrid from "@/components/ui/ButtonGrid";
 import {BackgroundBoxes} from "@/components/ui/BackgroundBoxes";
 import {TextGenerateEffect} from "@/components/ui/TextGenerateEffect";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/Accordion";
-import {Button} from "@/components/ui/form-elements/Button";
+//import {Button} from "@/components/ui/form-elements/Button";
+import {Button} from "@/components/ui/button";
 import {CarouselContent, CarouselItem, CarouselNext, CarouselPrevious} from "@/components/ui/SimpleCarousel";
 import {Card, CardContent} from "@/components/ui/SimpleCard";
 import {Progress} from "@/components/ui/Progress";
@@ -134,16 +135,15 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
             print(TextGenQuery),
             { id: id }
         );
-
-        let parsedAttrs: GeneralAttributes = JSON.parse(data.textgenerateEffekt.attributes);
+        let parsedAttrs: GeneralAttributes = JSON.parse(data.textgenEffekt.attributes);
         const textColor: string | undefined = getTextColorFromAttributes(parsedAttrs);
         const fontSize: string | undefined = getFontSizeFromAttributes(parsedAttrs);
         const styles = parseStyleString(parsedAttrs.style?.css ?? "");
         return (
             <div className={cn(parsedAttrs.className)}>
                 <TextGenerateEffect
-                    words={data.textgenerateEffekt.words ?? "Fail"}
-                    duration={data.textgenerateEffekt.duration ?? 1}
+                    words={data.textgenEffekt.words ?? "Fail"}
+                    duration={data.textgenEffekt.duration ?? 1}
                     fontSize={fontSize}
                     textColor={textColor}
                     style={styles}
@@ -318,10 +318,10 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
             print(HeroParallaxQuery),
             {id: id}
         );
-        let parsedAttrs: GeneralAttributes = JSON.parse(data.heroParallax.attributes);
+        let parsedAttrs: GeneralAttributes = JSON.parse(data.parallaxHeroshot.attributes);
         const styles = parseStyleString(parsedAttrs.style?.css ?? "");
         let heroParallaxProdDtoList:Array<HeroParallaxProdDto> = [];
-        for(const id of JSON.parse(data.heroParallax.productListIds)) {
+        for(const id of JSON.parse(data.parallaxHeroshot.productListIds)) {
             if(!id) {
                 continue;
             }
@@ -407,7 +407,7 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
                 const htmlWithPlaceholders = prepareHtmlContent(childContent);
                 let childComponents =  await parseHtmlWithComponents(htmlWithPlaceholders);
                 return {
-                    header: value.accordionItem.header,
+                    header: value.accordionItem.cardHeader,
                     childContent: (
                         <>
                             {childComponents}
@@ -458,7 +458,6 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
             print(SimpleCarouselQuery),
             {id: id}
         );
-
         let parsedAttrs: GeneralAttributes = JSON.parse(data.simpleCarousel.attributes);
         const styles = parseStyleString(parsedAttrs.style?.css ?? "");
         let carouselSlideDtoList:Array<SimpleCarouselSlideDto> = [];
@@ -478,20 +477,20 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
                 <SimpleCarousel style={styles} className="w-full max-w-xs" opts={{startIndex: data.simpleCarousel.initialIndex}}>
                     <CarouselContent>
                         {carouselSlideDtoList.map((value, index) => {
-                            let parsedChildAttrs: GeneralAttributes = JSON.parse(value.simpleCarouselSlide.attributes);
+                            let parsedChildAttrs: GeneralAttributes = JSON.parse(value.sCarouselSlide.attributes);
                             let childStyles = parseStyleString(parsedChildAttrs.style?.css ?? "");
                             return (
                                 <CarouselItem style={childStyles} key={index}>
                                     <div className="p-1">
-                                        <Card background={value.simpleCarouselSlide.background}>
+                                        <Card background={value.sCarouselSlide.background}>
                                             <CardContent className="flex aspect-square items-center justify-center p-6">
                                                 <span
                                                     style={{
-                                                        color: getTextColorFromAttributes(JSON.parse(value.simpleCarouselSlide.attributes)) ?? getTextColorFromAttributes(parsedAttrs),
-                                                        fontSize: getFontSizeFromAttributes(JSON.parse(value.simpleCarouselSlide.attributes)) ?? getFontSizeFromAttributes(parsedAttrs)
+                                                        color: getTextColorFromAttributes(JSON.parse(value.sCarouselSlide.attributes)) ?? getTextColorFromAttributes(parsedAttrs),
+                                                        fontSize: getFontSizeFromAttributes(JSON.parse(value.sCarouselSlide.attributes)) ?? getFontSizeFromAttributes(parsedAttrs)
                                                     }}
                                                 className="text-4xl font-semibold">
-                                                    {value.simpleCarouselSlide.label}
+                                                    {value.sCarouselSlide.label}
                                                 </span>
                                             </CardContent>
                                         </Card>
@@ -546,7 +545,7 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
                             {data.collapsible.triggerLabel}
                         </h4>
                         <CollapsibleTrigger>
-                        <Button variant="ghost" size="sm">
+                        <button className="IconButton">
                             <ChevronsUpDown className="h-4 w-4" />
                             <span
                                 style={{
@@ -555,7 +554,7 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
                                 }}
                                 className="sr-only">{data.collapsible.triggerLabel}
                             </span>
-                        </Button>
+                        </button>
                         </CollapsibleTrigger>
                     </div>
                     <CollapsibleContent>
@@ -580,7 +579,7 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
                             translateZ="50"
                             className="text-xl font-bold text-neutral-600 dark:text-white"
                         >
-                            {data.threeDCard.header}
+                            {data.threeDCard.cardHeader}
                         </CardItem>
                         <CardItem
                             as="p"
@@ -666,7 +665,7 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
                 >
                     <div className="flex basis-full flex-col p-4 tracking-tight text-slate-100/50 sm:basis-1/2 w-[20rem] h-[20rem] ">
                         <h3 className="max-w-xs !pb-2 !m-0 font-bold  text-base text-slate-100">
-                            {data.threeDPinCard.header}
+                            {data.threeDPinCard.cardHeader}
                         </h3>
                         <div className="text-base !m-0 !p-0 font-normal">
                         <span className="text-slate-500 ">
@@ -872,10 +871,10 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
             {id: id}
         );
 
-        let parsedAttrs: GeneralAttributes = JSON.parse(data.aniTabControl.attributes);
+        let parsedAttrs: GeneralAttributes = JSON.parse(data.animatedTabControl.attributes);
         const styles = parseStyleString(parsedAttrs.style?.css ?? "");
         let tabDtoList:Array<AnimatedTabDto> = [];
-        for(const id of JSON.parse(data.aniTabControl.tabIds)) {
+        for(const id of JSON.parse(data.animatedTabControl.tabIds)) {
             if(!id) {
                 continue;
             }
@@ -977,10 +976,10 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
             print(TracingBeamContainerQuery),
             {id: id}
         );
-        let parsedAttrs: GeneralAttributes = JSON.parse(data?.tracBeamContainer?.attributes ?? "{}");
+        let parsedAttrs: GeneralAttributes = JSON.parse(data?.tracBeamCon?.attributes ?? "{}");
         const styles = parseStyleString(parsedAttrs.style?.css ?? "");
         let itemDtoList:Array<TracingBeamItemDto> = [];
-        for(const id of JSON.parse(data.tracBeamContainer.itemIds)) {
+        for(const id of JSON.parse(data.tracBeamCon.itemIds)) {
             if(!id) {
                 continue;
             }
@@ -1052,10 +1051,10 @@ export const componentFactoryMap: Record<string,(id: string) => Promise<JSX.Elem
             {id: id}
         );
 
-        let parsedAttrs: GeneralAttributes = JSON.parse(data.stickyRevContainer.attributes);
+        let parsedAttrs: GeneralAttributes = JSON.parse(data.stickyRevealCon.attributes);
         const styles = parseStyleString(parsedAttrs.style?.css ?? "");
         let itemDtoList:Array<StickyRevealItemDto> = [];
-        for(const id of JSON.parse(data.stickyRevContainer.itemIds)) {
+        for(const id of JSON.parse(data.stickyRevealCon.itemIds)) {
             if(!id) {
                 continue;
             }

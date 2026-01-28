@@ -4,7 +4,7 @@
 	$cpt_dictionary = [
 		'Background Boxes' => [
 			'child_ids' => 'string',
-			'child_content' => 'number',
+			'child_content' => 'string',
 			'attributes' => 'string'
 		],
 		'Link Preview' => [
@@ -109,7 +109,8 @@
 		],
 		'Sticky Reveal Con' => [
 			'item_ids' => 'string',
-			'attributes' => 'string'
+			'attributes' => 'string',
+			'background' => 'string'
 		],
 		'Tracing Beam Item' => [
 			'badge' => 'string',
@@ -211,7 +212,7 @@
 			'card_header' => 'string',
 			'sub_header' => 'string',
 			'link_url' => 'string',
-			'link_label' => 'boolean',
+			'link_label' => 'string',
 			'attributes' => 'string'
 		],
 		'Collapsible' => [

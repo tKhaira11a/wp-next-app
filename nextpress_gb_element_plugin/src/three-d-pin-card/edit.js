@@ -15,6 +15,7 @@ import {useEffect, useRef, useState} from 'react';
 import {useDispatch} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import {edit} from "@wordpress/icons";
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {
@@ -34,51 +35,25 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const [ localHeader, setLocalHeader ] = useState(header);
 	const [ localSubHeader, setLocalSubHeader ] = useState(subHeader);
 	const [ localLinkLabel, setLocalLinkLabel ] = useState(linkLabel);
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		attributes,
-		header,
-		subHeader,
-		linkLabel,
-		linkUrl
-	]);
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'header',
+		'subHeader',
+		'linkLabel',
+		'linkUrl'
+	];
 
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
 		try {
-			const cptName = "three_d_pin_card";
+			const cptName = "three_d_pincard";
 			const postCategory = "postType";
 
 			const newPostReccord = {
 				title: `$-3d-pin-card-${Uuid}`,
 				status: 'publish',
 				meta: {
-					header: header,
+					card_header: header,
 					sub_header: subHeader,
 					link_url: linkUrl,
 					link_label: linkLabel,
@@ -106,13 +81,13 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		}
 		setIsPendingUpdate(true);
 		try {
-			const cptName = "three_d_pin_card";
+			const cptName = "three_d_pincard";
 			const postCategory = "postType";
 
 			const updatedPostReccord = {
 				id: cptId,
 				meta: {
-					header: header,
+					card_header: header,
 					sub_header: subHeader,
 					link_url: linkUrl,
 					link_label: linkLabel,
@@ -129,9 +104,20 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		}
 	}
 
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
+
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });
 	};
+
 	return (
 		<>
 			<InspectorControls>

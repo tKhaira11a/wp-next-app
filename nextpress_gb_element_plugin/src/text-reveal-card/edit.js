@@ -7,6 +7,7 @@ import './editor.scss';
 import { useDispatch } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import {edit} from "@wordpress/icons";
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit({ attributes, setAttributes, clientId  }) {
 	const { text = '', revealText = '', cardTitle = '', cardDescription = '', cptId, instanceId, style = {css : ""}   } = attributes;
@@ -20,40 +21,13 @@ export default function Edit({ attributes, setAttributes, clientId  }) {
 	const [ localCardDescription, setLocalCardDescription ] = useState(cardDescription);
 	const [ localText, setLocalText ] = useState(text);
 	const [ localRevealText, setLocalRevealText ] = useState(revealText);
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				cptId: undefined,
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		text,
-		revealText,
-		cardTitle,
-		cardDescription,
-		attributes
-	]);
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'text',
+		'revealText',
+		'cardTitle',
+		'cardDescription'
+	];
 
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
@@ -87,33 +61,43 @@ export default function Edit({ attributes, setAttributes, clientId  }) {
 	}
 
 
-const updateCptEntry = async () => {
-	if (isPendingUpdate) {
-		return;
-	}
-	setIsPendingUpdate(true);
-	try {
-		const cptName = "text_reveal_card";
-		const postCategory = "postType";
+	const updateCptEntry = async () => {
+		if (isPendingUpdate) {
+			return;
+		}
+		setIsPendingUpdate(true);
+		try {
+			const cptName = "text_reveal_card";
+			const postCategory = "postType";
 
-		const updatedPostReccord = {
-			id: cptId,
-			meta: {
-				text: text,
-				reveal_text: revealText,
-				card_title: cardTitle,
-				card_description: cardDescription,
-				attributes: JSON.stringify(attributes)
-			}
-		};
+			const updatedPostReccord = {
+				id: cptId,
+				meta: {
+					text: text,
+					reveal_text: revealText,
+					card_title: cardTitle,
+					card_description: cardDescription,
+					attributes: JSON.stringify(attributes)
+				}
+			};
 
-		const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
-	} catch (error) {
-		console.error("Fehler beim Aktualisieren des CPT:", error);
-	} finally {
-		setIsPendingUpdate(false);
+			const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
+		} catch (error) {
+			console.error("Fehler beim Aktualisieren des CPT:", error);
+		} finally {
+			setIsPendingUpdate(false);
+		}
 	}
-}
+
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
 
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });

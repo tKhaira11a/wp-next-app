@@ -8,6 +8,7 @@ import {useDispatch} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import dummyCardImg from '../../dummy_card_img.jpg';
 import {edit} from "@wordpress/icons";
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {testimonialTitle= "", bild = "", position = "", testimonialName = "", quote= "", cptId, instanceId, style = {css : ""} } = attributes;
@@ -19,40 +20,14 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const [ isOpen, setOpen ] = useState( false );
 	const [ localTestimonialTitle, setLocalTestimonialTitle ] = useState(testimonialTitle);
 	const [ localQuote, setLocalQuote ] = useState(quote);
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		bild,
-		position,
-		testimonialName,
-		testimonialTitle,
-		quote,
-		attributes
-	]);
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'bild',
+		'position',
+		'testimonialName',
+		'testimonialTitle',
+		'quote'
+	];
 
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
@@ -117,9 +92,20 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		}
 	}
 
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
+
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });
 	};
+
 	return (
 		<>
 			<InspectorControls>

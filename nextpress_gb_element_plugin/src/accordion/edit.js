@@ -6,6 +6,7 @@ import {useDispatch, useSelect} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import './editor.scss';
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {
@@ -20,6 +21,12 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const [isPendingUpdate, setIsPendingUpdate] = useState(false);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const watchedAttributes = [
+		'cptId',
+		'hasCreatedCPT',
+		'innerBlocks',
+		'accordionItems'
+	];
 
 	const innerBlocks = useSelect(
 		(select) => {
@@ -27,38 +34,6 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		},
 		[attributes, clientId, isPendingUpdate]
 	);
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				cptId: undefined,
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		innerBlocks,
-		accordionItems,
-		attributes
-	]);
 
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
@@ -119,6 +94,17 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 			setIsPendingUpdate(false);
 		}
 	}
+
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		externalDependencies: [innerBlocks],
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
 
 	return (
 		<>

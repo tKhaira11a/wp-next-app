@@ -6,6 +6,7 @@ import {ToolbarGroup, ToolbarButton, Modal, Button, PanelBody, TextareaControl} 
 import './editor.scss';
 import {__} from "@wordpress/i18n";
 import {gallery} from "@wordpress/icons";
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -19,37 +20,11 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
 	const [ isOpen, setOpen ] = useState( false );
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'images'
+	];
 
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				cptId: undefined,
-				instanceId: clientId,
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		images,
-		attributes
-	]);
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
 		try {
@@ -91,6 +66,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			setIsPendingUpdate(false);
 		}
 	};
+
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
+
 	return (
 		<>
 			<InspectorControls>

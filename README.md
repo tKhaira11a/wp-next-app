@@ -1,8 +1,8 @@
 # WordPress + Next.js Headless Stack
 
-Ein vollautomatisiertes Docker-Setup für eine Headless WordPress Instanz mit Next.js Frontend.
+A fully automated Docker setup for a headless WordPress instance with Next.js frontend.
 
-## 🏗️ Architektur
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -15,80 +15,80 @@ Ein vollautomatisiertes Docker-Setup für eine Headless WordPress Instanz mit Ne
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 .
-├── docker-compose.yml          # Haupt Docker Compose mit Build-Dockerfile
-├── docker-compose.simple.yml   # Alternative mit Volume-Mounts (kein Build)
-├── WordPress.Dockerfile        # WordPress Image mit Plugin-Builds
-├── build.sh                    # Master Build & Deploy Script
-├── deploy.sh                   # Vereinfachtes Deploy Script
-├── Makefile                    # Make-Befehle für einfache Steuerung
-├── LICENSE                     # GPL-3.0 Lizenz
-├── .env.example                # Beispiel Umgebungsvariablen
-├── .env                        # Deine lokale Konfiguration (gitignored)
+├── docker-compose.yml          # Main Docker Compose with build Dockerfile
+├── docker-compose.simple.yml   # Alternative with volume mounts (no build)
+├── WordPress.Dockerfile        # WordPress image with plugin builds
+├── build.sh                    # Master build & deploy script
+├── deploy.sh                   # Simplified deploy script
+├── Makefile                    # Make commands for easy control
+├── LICENSE                     # GPL-3.0 license
+├── .env.example                # Example environment variables
+├── .env                        # Your local configuration (gitignored)
 ├── scripts/
-│   ├── docker-entrypoint-wp.sh # WordPress Custom Entrypoint
-│   ├── setup-wordpress.sh      # WordPress Konfiguration Script
-│   └── wp-cli-setup.sh         # WP-CLI Setup Script
-├── shared/                     # Geteilte Dateien zwischen Containern
-│   └── .env.nextjs             # Generierte Credentials für Next.js
-├── headless/                   # WordPress Headless Theme
-├── wp-next-app/                # Next.js Application
-├── nextpress_gb_element_plugin/    # Custom Gutenberg Plugin
-├── nextpress_contact_form_plugin/  # Custom Contact Form Plugin
-├── wp-graphql-jwt-authentication-develop/  # JWT Auth Plugin (Third-Party, GPL-3.0)
+│   ├── docker-entrypoint-wp.sh # WordPress custom entrypoint
+│   ├── setup-wordpress.sh      # WordPress configuration script
+│   └── wp-cli-setup.sh         # WP-CLI setup script
+├── shared/                     # Shared files between containers
+│   └── .env.nextjs             # Generated credentials for Next.js
+├── headless/                   # WordPress headless theme
+├── wp-next-app/                # Next.js application
+├── nextpress_gb_element_plugin/    # Custom Gutenberg plugin
+├── nextpress_contact_form_plugin/  # Custom contact form plugin
+├── wp-graphql-jwt-authentication-develop/  # JWT auth plugin (third-party, GPL-3.0)
 └── examples/
-    └── headless-theme-example/ # Beispiel Headless Theme
+    └── headless-theme-example/ # Example headless theme
 ```
 
-**WICHTIG:** Die Verzeichnisse für Plugins, Theme und Next.js App enthalten nur READMEs.
-Du musst deine bestehenden Dateien dort hineinkopieren!
+**IMPORTANT:** Plugin, theme, and Next.js app directories contain only READMEs.
+You must copy your existing files into these directories!
 
 ## 🚀 Quick Start
 
-### 1. Vorbereitung
+### 1. Preparation
 
 ```bash
-# Repository klonen/entpacken
+# Clone/extract repository
 cd wp-next-app
 
-# Umgebungsvariablen erstellen
+# Create environment variables
 cp .env.example .env
 ```
 
-### 2. Deine Dateien kopieren
+### 2. Copy Your Files
 
-**WICHTIG:** Kopiere deine bestehenden Projektdateien in die entsprechenden Verzeichnisse:
+**IMPORTANT:** Copy your existing project files into the corresponding directories:
 
 ```bash
-# Next.js App
-cp -r /pfad/zu/deiner-next-app/* ./wp-next-app/
+# Next.js app
+cp -r /path/to/your-next-app/* ./wp-next-app/
 
-# Custom Plugins
-cp -r /pfad/zu/nextpress_gb_element_plugin/* ./nextpress_gb_element_plugin/
-cp -r /pfad/zu/nextpress_contact_form_plugin/* ./nextpress_contact_form_plugin/
+# Custom plugins
+cp -r /path/to/nextpress_gb_element_plugin/* ./nextpress_gb_element_plugin/
+cp -r /path/to/nextpress_contact_form_plugin/* ./nextpress_contact_form_plugin/
 
-# Third-Party Plugin (JWT Authentication)
-cp -r /pfad/zu/wp-graphql-jwt-authentication-develop/* ./wp-graphql-jwt-authentication-develop/
+# Third-party plugin (JWT Authentication)
+cp -r /path/to/wp-graphql-jwt-authentication-develop/* ./wp-graphql-jwt-authentication-develop/
 
-# Headless Theme
-cp -r /pfad/zu/headless-theme/* ./headless/
+# Headless theme
+cp -r /path/to/headless-theme/* ./headless/
 ```
 
-### 3. Konfiguration anpassen (optional)
+### 3. Adjust Configuration (Optional)
 
-Bearbeite `.env` und passe die Werte an:
+Edit `.env` and customize values:
 
 ```env
-# Wichtige Einstellungen
+# Important settings
 WP_ADMIN_USER=admin
 WP_ADMIN_EMAIL=admin@yourdomain.com
 WP_SITE_URL=http://localhost:8888
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-# Secrets werden automatisch generiert wenn leer
+# Secrets are auto-generated if empty
 HEADLESS_SECRET=
 GRAPHQL_JWT_SECRET=
 ```
@@ -96,89 +96,89 @@ GRAPHQL_JWT_SECRET=
 ### 4. Build & Deploy
 
 ```bash
-# Ausführbar machen
+# Make executable
 chmod +x build.sh
 
-# Alles bauen und starten
+# Build and start everything
 ./build.sh build
 ```
 
-Das Script führt automatisch folgende Schritte aus:
+The script automatically performs the following steps:
 
-1. ✅ Generiert fehlende Secrets
-2. ✅ Baut WordPress Image (inkl. Plugin-Builds)
-3. ✅ Startet MariaDB und wartet auf Healthcheck
-4. ✅ Startet WordPress und wartet auf Healthcheck
-5. ✅ Installiert WordPress (Core, Plugins, Theme)
-6. ✅ Erstellt App-User mit Application Password
-7. ✅ Konfiguriert Permalinks und GraphQL
-8. ✅ Erstellt 404-Seite
-9. ✅ Exportiert Credentials für Next.js
-10. ✅ Baut und startet Next.js mit korrekten Credentials
+1. ✅ Generates missing secrets
+2. ✅ Builds WordPress image (including plugin builds)
+3. ✅ Starts MariaDB and waits for healthcheck
+4. ✅ Starts WordPress and waits for healthcheck
+5. ✅ Installs WordPress (core, plugins, theme)
+6. ✅ Creates app user with application password
+7. ✅ Configures permalinks and GraphQL
+8. ✅ Creates 404 page
+9. ✅ Exports credentials for Next.js
+10. ✅ Builds and starts Next.js with correct credentials
 
-## 📋 Verfügbare Befehle
+## 📋 Available Commands
 
 ```bash
-./build.sh build     # Vollständiger Build (Standard)
-./build.sh start     # Bestehende Services starten
-./build.sh stop      # Alle Services stoppen
-./build.sh restart   # Alle Services neustarten
-./build.sh cleanup   # Alles entfernen (Container, Volumes, generierte Dateien)
-./build.sh logs      # Logs aller Services anzeigen
-./build.sh status    # Status aller Services anzeigen
-./build.sh help      # Hilfe anzeigen
+./build.sh build     # Full build (default)
+./build.sh start     # Start existing services
+./build.sh stop      # Stop all services
+./build.sh restart   # Restart all services
+./build.sh cleanup   # Remove everything (containers, volumes, generated files)
+./build.sh logs      # Show logs of all services
+./build.sh status    # Show status of all services
+./build.sh help      # Show help
 ```
 
-## 🔌 Installierte Plugins
+## 🔌 Installed Plugins
 
-### Aus WordPress Plugin Store
-- **WP GraphQL** (`wp-graphql`) - GraphQL API für WordPress
-- **WP GraphQL IDE** (`wp-graphql-ide`) - GraphQL IDE im Admin
-- **Add WPGraphQL SEO** (`add-wpgraphql-seo`) - SEO-Daten via GraphQL
-- **Redirection** (`redirection`) - URL-Weiterleitungen
-- **Yoast SEO** (`wordpress-seo`) - SEO Management
+### From WordPress Plugin Store
+- **WP GraphQL** (`wp-graphql`) - GraphQL API for WordPress
+- **WP GraphQL IDE** (`wp-graphql-ide`) - GraphQL IDE in admin
+- **Add WPGraphQL SEO** (`add-wpgraphql-seo`) - SEO data via GraphQL
+- **Redirection** (`redirection`) - URL redirects
+- **Yoast SEO** (`wordpress-seo`) - SEO management
 
-### Custom Plugins (werden während des Builds kompiliert)
-- **NextPress GB Components** (`nextpress_gb_element_plugin`) - Custom Gutenberg Blocks
-- **NextPress Contact Form** (`nextpress_contact_form_plugin`) - Kontaktformular Elemente
+### Custom Plugins (compiled during build)
+- **NextPress GB Components** (`nextpress_gb_element_plugin`) - Custom Gutenberg blocks
+- **NextPress Contact Form** (`nextpress_contact_form_plugin`) - Contact form elements
 
-### Third-Party Plugins (im Repository enthalten)
-- **WP GraphQL JWT Authentication** (`wp-graphql-jwt-authentication-develop`) - JWT Auth für GraphQL
-    - Quelle: https://github.com/wp-graphql/wp-graphql-jwt-authentication
-    - Lizenz: GPL-3.0
-    - Benötigt keinen Build-Schritt
+### Third-Party Plugins (included in repository)
+- **WP GraphQL JWT Authentication** (`wp-graphql-jwt-authentication-develop`) - JWT auth for GraphQL
+  - Source: https://github.com/wp-graphql/wp-graphql-jwt-authentication
+  - License: GPL-3.0
+  - No build step required
 
-## ⚙️ WordPress Konfiguration
+## ⚙️ WordPress Configuration
 
-Das Setup konfiguriert automatisch:
+The setup automatically configures:
 
-### wp-config.php Ergänzungen
+### wp-config.php Additions
 ```php
 define('HEADLESS_SECRET', '...');
 define('HEADLESS_URL', 'http://localhost:3000');
 define('GRAPHQL_JWT_AUTH_SECRET_KEY', '...');
 define('GRAPHQL_JWT_AUTH_CORS_ENABLE', true);
-define('WP_HOME', 'http://localhost:3000');  // Nach Next.js Start
+define('WP_HOME', 'http://localhost:3000');  // After Next.js start
 ```
 
-### Permalink-Struktur
+### Permalink Structure
 ```
 /%postname%/
 ```
 
-### GraphQL Einstellungen
-- ✅ Public Introspection aktiviert
-- ✅ GraphQL Tracing aktiviert
-- ✅ Batch Queries aktiviert
+### GraphQL Settings
+- ✅ Public introspection enabled
+- ✅ GraphQL tracing enabled
+- ✅ Batch queries enabled
 
-## 🔐 Generierte Credentials
+## 🔐 Generated Credentials
 
-Nach dem Build findest du alle Credentials in:
+After build, find all credentials in:
 
-- **Haupt-Konfiguration**: `.env`
-- **Next.js Umgebung**: `shared/.env.nextjs`
+- **Main configuration**: `.env`
+- **Next.js environment**: `shared/.env.nextjs`
 
-Beispiel `shared/.env.nextjs`:
+Example `shared/.env.nextjs`:
 ```env
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 NEXT_PUBLIC_WORDPRESS_API_URL=http://localhost:8888
@@ -189,9 +189,9 @@ WP_APP_PASS=xxxx xxxx xxxx xxxx xxxx xxxx
 NOT_FOUND_ID=42
 ```
 
-## 🌐 Zugriff
+## 🌐 Access
 
-Nach erfolgreichem Build:
+After successful build:
 
 | Service | URL |
 |---------|-----|
@@ -202,54 +202,54 @@ Nach erfolgreichem Build:
 
 ## 🔧 Troubleshooting
 
-### WordPress startet nicht
+### WordPress Won't Start
 ```bash
-# Logs prüfen
+# Check logs
 docker compose logs wordpress
 
-# Container neustarten
+# Restart container
 docker compose restart wordpress
 ```
 
-### Next.js Build schlägt fehl
+### Next.js Build Fails
 ```bash
-# Prüfen ob Credentials generiert wurden
+# Check if credentials were generated
 cat shared/.env.nextjs
 
-# WordPress erreichbar?
+# Is WordPress reachable?
 curl http://localhost:8888/graphql
 ```
 
-### Plugins werden nicht aktiviert
+### Plugins Not Activated
 ```bash
-# In WordPress Container verbinden
+# Connect to WordPress container
 docker compose exec wordpress bash
 
-# WP-CLI verwenden
+# Use WP-CLI
 wp plugin list --allow-root
 wp plugin activate <plugin-name> --allow-root
 ```
 
-### Datenbank-Verbindung fehlgeschlagen
+### Database Connection Failed
 ```bash
-# MariaDB Status prüfen
+# Check MariaDB status
 docker compose logs mariadb
 
-# Manuell verbinden
+# Connect manually
 docker compose exec mariadb mysql -uroot -p
 ```
 
-## 🏭 Produktion
+## 🏭 Production
 
-Für Produktions-Deployments:
+For production deployments:
 
-1. Ändere Passwörter in `.env`
-2. Setze echte Domain-URLs
-3. Aktiviere SSL/HTTPS
-4. Verwende externe Datenbank
-5. Konfiguriere Reverse Proxy (nginx/traefik)
+1. Change passwords in `.env`
+2. Set real domain URLs
+3. Enable SSL/HTTPS
+4. Use external database
+5. Configure reverse proxy (nginx/traefik)
 
-Beispiel `.env` für Produktion:
+Example `.env` for production:
 ```env
 WP_SITE_URL=https://api.yourdomain.com
 NEXT_PUBLIC_BASE_URL=https://yourdomain.com
@@ -258,24 +258,24 @@ HEADLESS_URL=https://yourdomain.com
 
 ## 📦 Third-Party Dependencies
 
-Dieses Projekt verwendet Open-Source-Komponenten mit unterschiedlichen Lizenzen:
+This project uses open-source components with various licenses:
 
 ### WordPress & Plugins (GPL-2.0+)
 - WordPress Core
-- WP GraphQL und verwandte Plugins
+- WP GraphQL and related plugins
 - Yoast SEO
 - Redirection
 
-### JavaScript/Node.js (siehe package.json)
+### JavaScript/Node.js (see package.json)
 - React, Next.js (MIT)
 - WordPress Gutenberg Packages (@wordpress/*) (GPL-2.0+)
 - Radix UI Components (MIT)
-- Weitere npm-Pakete unter MIT und anderen Open-Source-Lizenzen
+- Additional npm packages under MIT and other open-source licenses
 
-Eine vollständige Liste aller Dependencies findest du in:
-- `wp-next-app/package.json` (Next.js Frontend)
-- `nextpress_gb_element_plugin/package.json` (Gutenberg Plugin)
-- `nextpress_contact_form_plugin/package.json` (Contact Form Plugin)
+A complete list of all dependencies can be found in:
+- `wp-next-app/package.json` (Next.js frontend)
+- `nextpress_gb_element_plugin/package.json` (Gutenberg plugin)
+- `nextpress_contact_form_plugin/package.json` (Contact form plugin)
 
 ## 📝 License
 

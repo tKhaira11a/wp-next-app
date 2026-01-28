@@ -103,7 +103,7 @@ export type TextRevealCardDto = {
 }
 
 export type TextgenerateEffekt = {
-    textgenerateEffekt: {
+    textgenEffekt: {
         words: string,
         duration: number,
         attributes: string
@@ -119,7 +119,7 @@ export type LinkPreviewDto = {
 }
 
 export type HeroParallaxDto = {
-    heroParallax: {
+    parallaxHeroshot: {
         productListIds: string,
         attributes: string
     }
@@ -158,7 +158,7 @@ export type ThreeDCardDto = {
         buttonUrl: string,
         linkLable: string,
         linkUrl: string,
-        header: string,
+        cardHeader: string,
         subHeader: string,
         skew: boolean
     }
@@ -169,7 +169,7 @@ export type ThreeDPinCardDto = {
         attributes: string,
         linkLable: string,
         linkUrl: string,
-        header: string,
+        cardHeader: string,
         subHeader: string
     }
 }
@@ -218,7 +218,7 @@ export type AccordionDto = {
 
 export type AccordionItemDto = {
     accordionItem: {
-        header: string,
+        cardHeader: string,
         childContent: string,
         attributes: string
     }
@@ -272,21 +272,21 @@ export type TimelineContainerDto = {
 }
 
 export type TracingBeamContainerDto = {
-    tracBeamContainer: {
+    tracBeamCon: {
         itemIds: string,
         attributes: string
     }
 }
 
 export type StickyRevealContainerDto = {
-    stickyRevContainer: {
+    stickyRevealCon: {
         itemIds: string,
         attributes: string
     }
 }
 
 export type AniTabControlDto = {
-    aniTabControl: {
+    animatedTabControl: {
         tabIds: string,
         attributes: string
     }
@@ -301,7 +301,7 @@ export type SimpleCarouselDto = {
 }
 
 export type SimpleCarouselSlideDto = {
-    simpleCarouselSlide: {
+    sCarouselSlide: {
         background: string,
         label: string,
         attributes: string

@@ -6,6 +6,7 @@ import './editor.scss';
 import {useDispatch, useSelect} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import { store as blockEditorStore } from '@wordpress/block-editor';
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const { cptId, instanceId, itemIds, style = {css : ""}   } = attributes;
@@ -14,49 +15,21 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const [isPendingUpdate, setIsPendingUpdate] = useState(false);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'itemIds'
+	];
 
 	const innerBlocks = useSelect(
 		(select) => select(blockEditorStore).getBlock(clientId)?.innerBlocks || [],
 		[attributes, clientId, isPendingUpdate]
 	);
 
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				cptId: undefined,
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		itemIds,
-		innerBlocks,
-		attributes
-	]);
-
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
 		try {
 			const childLabels = innerBlocks?.map(block => block.attributes?.cptId || null);
-			const cptName = "trac_beam_container";
+			const cptName = "trac_beam_con";
 			const postCategory = "postType";
 
 			const newPostReccord = {
@@ -91,7 +64,7 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 
 		setIsPendingUpdate(true);
 		try {
-			const cptName = "trac_beam_container";
+			const cptName = "trac_beam_con";
 			const postCategory = "postType";
 			const childLabels = innerBlocks?.map(block => block.attributes.cptId);
 			const updatedPostReccord = {
@@ -110,6 +83,17 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 			setIsPendingUpdate(false);
 		}
 	}
+
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		externalDependencies: [innerBlocks],
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
 
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });

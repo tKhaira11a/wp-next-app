@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {serialize} from "@wordpress/blocks";
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import './editor.scss';
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {header = '', childContent = '', cptId, instanceId, style = {css : ""} } = attributes;
@@ -16,38 +17,13 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const [hasCreatedCPT, setHasCreatedCPT] = useState(!!cptId);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const watchedAttributes = [
+		'cptId',
+		'hasCreatedCPT',
+		'header',
+		'childContent'
+	];
 
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		header,
-		childContent,
-		attributes
-	]);
 	const innerBlocks = useSelect((select) => {
 		return select(blockEditorStore).getBlock(clientId)?.innerBlocks || [];
 	},[attributes, clientId, isPendingUpdate]);
@@ -126,9 +102,21 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		}
 	}
 
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		externalDependencies: [innerBlocks],
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
+
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });
 	};
+
 	return (
 		<>
 			<InspectorControls>

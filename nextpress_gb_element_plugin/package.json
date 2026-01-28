@@ -10,7 +10,7 @@
 		"build",
 		"NextPress-GB-Components.php",
 		"register_cpts.php",
-		"readme.txt",
+		"README.md",
 		"block-icon.png"
 	],
 	"scripts": {

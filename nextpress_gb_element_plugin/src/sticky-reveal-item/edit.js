@@ -8,6 +8,8 @@ import {ToolbarGroup, ToolbarButton, Modal, Button, PanelBody, TextareaControl, 
 import {__} from "@wordpress/i18n";
 import { serialize } from '@wordpress/blocks';
 import {edit} from "@wordpress/icons";
+import {useCptSync} from "../hooks/useCptSync";
+
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
 		cptId,
@@ -22,6 +24,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const [ isOpen, setOpen ] = useState( false );
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'childContent',
+		'itemTitle',
+		'description'
+	];
 
 	const extractTextContent = (blocks) => {
 		return blocks.flatMap((block) => {
@@ -34,39 +42,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		return select(blockEditorStore).getBlock(clientId)?.innerBlocks || [];
 	},[attributes, clientId, isPendingUpdate]);
 
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				cptId: undefined,
-				instanceId: clientId,
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
 
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		innerBlocks,
-		childContent,
-		itemTitle,
-		description,
-		attributes
-	]);
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
 		try {
@@ -134,6 +110,18 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			setIsPendingUpdate(false);
 		}
 	};
+
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		externalDependencies: [innerBlocks],
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
+
 	return (
 		<>
 			<InspectorControls>

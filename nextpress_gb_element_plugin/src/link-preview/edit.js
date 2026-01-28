@@ -15,6 +15,7 @@ import './editor.scss';
 import { useDispatch } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import {edit} from "@wordpress/icons";
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit({ attributes, setAttributes, clientId  }) {
 	const { url = '', label = '', cptId, instanceId, style = {css : ""}  } = attributes;
@@ -25,38 +26,11 @@ export default function Edit({ attributes, setAttributes, clientId  }) {
 	const blockProps = useBlockProps();
 	const [ isOpen, setOpen ] = useState( false );
 	const [ localLabel, setLocalLabel ] = useState(label);
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				cptId: undefined,
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		url,
-		label,
-		attributes
-	]);
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'url',
+		'label'
+	];
 
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
@@ -88,31 +62,41 @@ export default function Edit({ attributes, setAttributes, clientId  }) {
 	}
 
 
-const updateCptEntry = async () => {
-	if (isPendingUpdate) {
-		return;
-	}
-	setIsPendingUpdate(true);
-	try {
-		const cptName = "link_preview";
-		const postCategory = "postType";
+	const updateCptEntry = async () => {
+		if (isPendingUpdate) {
+			return;
+		}
+		setIsPendingUpdate(true);
+		try {
+			const cptName = "link_preview";
+			const postCategory = "postType";
 
-		const updatedPostReccord = {
-			id: cptId,
-			meta: {
-				url: url,
-				label: label,
-				attributes: JSON.stringify(attributes)
-			}
-		};
+			const updatedPostReccord = {
+				id: cptId,
+				meta: {
+					url: url,
+					label: label,
+					attributes: JSON.stringify(attributes)
+				}
+			};
 
-		const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
-	} catch (error) {
-		console.error("Fehler beim Aktualisieren des CPT:", error);
-	} finally {
-		setIsPendingUpdate(false);
+			const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
+		} catch (error) {
+			console.error("Fehler beim Aktualisieren des CPT:", error);
+		} finally {
+			setIsPendingUpdate(false);
+		}
 	}
-}
+
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
 
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });

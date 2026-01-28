@@ -11,6 +11,9 @@
 		"cptId": {
 			"type": "number"
 		},
+		"background": {
+			"type": "string"
+		},
 		"instanceId": {
 			"type": "string"
 		},

@@ -6,6 +6,7 @@ import {useEffect, useRef, useState} from 'react';
 import './editor.scss';
 import {useDispatch} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
+import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const {label, url, cptId, instanceId, style = {css : ""}} = attributes;
@@ -15,38 +16,11 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 	const [hasCreatedCPT, setHasCreatedCPT] = useState(!!cptId);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
-
-
-	useEffect(() => {
-		if (instanceId !== clientId) {
-			setAttributes({
-				instanceId: clientId
-			});
-			setHasCreatedCPT(false);
-		}
-	}, [instanceId, clientId]);
-
-	useEffect(() => {
-		if (!hasCreatedCPT) {
-			createCptEntry();
-		}
-	}, [hasCreatedCPT]);
-
-	useEffect(() => {
-		if (!cptId || !hasCreatedCPT) return;
-
-		const updateTimeout = setTimeout(() => {
-			updateCptEntry();
-		}, 3000);
-
-		return () => clearTimeout(updateTimeout);
-	}, [
-		cptId,
-		hasCreatedCPT,
-		label,
-		url,
-		attributes
-	]);
+	const watchedAttributes = [
+		'hasCreatedCPT',
+		'label',
+		'url'
+	];
 
 	const createCptEntry = async () => {
 		setIsPendingUpdate(true);
@@ -105,9 +79,20 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		}
 	}
 
+	useCptSync({
+		clientId,
+		attributes,
+		setAttributes,
+		watchedAttributes,
+		createCallback: createCptEntry,
+		updateCallback: updateCptEntry,
+		debounceDelay: 3000
+	});
+
 	const handleAttributeChange = (attribute, value) => {
 		setAttributes({ [attribute]: value });
 	};
+
 	return (
 		<>
 			<InspectorControls>
