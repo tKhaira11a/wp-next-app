@@ -149,7 +149,8 @@
 		],
 		'Animated Tab-Control' => [
 			'tab_ids' => 'string',
-			'attributes' => 'string'
+			'attributes' => 'string',
+			'initial_index' => 'number'
 		],
 		'Animated Testimonial' => [
 			'testimonial_list' => 'string',

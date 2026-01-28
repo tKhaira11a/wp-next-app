@@ -1,92 +1,40 @@
-/*!
- * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
- * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*!
- * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
- * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*!
- * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
- * https://khairalla-code.com | https://github.com/tKhaira11a/wp-next-app-complete-.git
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*!
- * Copyright (C) 2025 Tarik Khairalla (khairalla-code)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-/**
- * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
- */
-
-.wp-block-nextpress-block-ani-tab-control {
-	min-height: 60px;
+.np-tab-buttons {
+	display: flex;
+	gap: 0;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 0;
 }
 
-button.components-button.block-list-appender__toggle.block-editor-button-block-appender.is-next-40px-default-size {
-	display: block !important;
-}
+.np-tab-button {
+	padding: 0.5rem 1rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #666;
+	background: transparent;
+	border: 1px solid transparent;
+	border-bottom: none;
+	border-radius: 4px 4px 0 0;
+	cursor: pointer;
+	transition: all 150ms ease;
+	margin-bottom: -1px;
 
-.wp-block-nextpress-block-ani-tab-control .aniTab {
-	display: none;
-
-	&.is-tab-active {
-		display: block;
+	&:hover:not(.is-active) {
+		color: #333;
+		background: #f5f5f5;
 	}
+
+	&.is-active {
+		color: #1e1e1e;
+		background: #fff;
+		border-color: #ddd;
+		border-bottom-color: #fff;
+	}
+}
+
+.np-tab-content {
+	border: 1px solid #ddd;
+	border-top: none;
+	min-height: 100px;
+	padding: 1rem;
+	background: #fff;
 }

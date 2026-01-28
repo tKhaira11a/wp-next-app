@@ -1,46 +1,54 @@
 import { __ } from '@wordpress/i18n';
-import {InnerBlocks, InspectorControls, useBlockProps} from '@wordpress/block-editor';
-import {PanelBody, TabPanel, TextareaControl} from '@wordpress/components';
-import {useEffect, useRef, useState} from 'react';
+import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import { PanelBody, RangeControl, TextareaControl } from '@wordpress/components';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import './editor.scss';
-import {useDispatch, useSelect} from "@wordpress/data";
+import { useDispatch, useSelect } from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
 import { store as blockEditorStore } from '@wordpress/block-editor';
-import {useCptSync} from "../hooks/useCptSync";
+import { useCptSync } from "../hooks/useCptSync";
 
-export default function Edit( { attributes, setAttributes, clientId  } ) {
-	const { cptId, instanceId, initialIndex = 0, tabIds, activeTab = "", style = {css : ""}   } = attributes;
+export default function Edit({ attributes, setAttributes, clientId }) {
+	const { cptId, instanceId, initialIndex = 0, tabIds, activeTab = "", style = { css: "" } } = attributes;
 	const { saveEntityRecord } = useDispatch('core');
-	const [hasCreatedCPT, setHasCreatedCPT] = useState(!!cptId);
 	const [isPendingUpdate, setIsPendingUpdate] = useState(false);
 	const Uuid = useRef(uuidv4()).current;
 	const blockProps = useBlockProps();
 	const watchedAttributes = [
-		'hasCreatedCPT',
 		'tabIds',
 		'initialIndex'
 	];
 
 	const innerBlocks = useSelect(
 		(select) => select(blockEditorStore).getBlock(clientId)?.innerBlocks || [],
-		[attributes, clientId, isPendingUpdate]
+		[clientId]
 	);
 
 	const tabs = innerBlocks.map((block, index) => ({
 		name: block.attributes?.tabValue,
 		title: block.attributes?.tabTitle || `Tab ${index + 1}`,
-		childContent: block.attributes?.childContent || `Tab ${index + 1}`,
 	}));
 
-	const activeTabBlock = innerBlocks.find(
-		(block) => block.attributes?.tabValue === activeTab
-	);
+	// Finde ersten Tab mit gültigem tabValue
+	const firstValidTabName = tabs.find(tab => tab.name)?.name;
 
-	const createCptEntry = async () => {
+	// Aktiver Tab: gespeicherter Wert, oder erster gültiger Tab
+	const currentActiveTab = activeTab || firstValidTabName || "";
+
+	// Setze activeTab wenn noch nicht gesetzt und ein gültiger Tab existiert
+	useEffect(() => {
+		if (!activeTab && firstValidTabName) {
+			setAttributes({ activeTab: firstValidTabName });
+		}
+	}, [activeTab, firstValidTabName, setAttributes]);
+
+	const createCptEntry = useCallback(async () => {
+		if (isPendingUpdate || cptId) return;
+
 		setIsPendingUpdate(true);
 		try {
 			const childLabels = innerBlocks?.map(block => block.attributes?.cptId || null);
-			const cptName = "ani_tab_control";
+			const cptName = "animated_tabcontrol";
 			const postCategory = "postType";
 
 			const newPostReccord = {
@@ -58,9 +66,8 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 			if (post && post.id) {
 				setAttributes({
 					cptId: post.id,
-					productListIds: childLabels
+					tabIds: childLabels
 				});
-				setHasCreatedCPT(true);
 			}
 
 		} catch (error) {
@@ -68,18 +75,16 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 		} finally {
 			setIsPendingUpdate(false);
 		}
-	}
+	}, [cptId, isPendingUpdate, innerBlocks, Uuid, attributes, initialIndex, saveEntityRecord, setAttributes]);
 
-	const updateCptEntry = async () => {
-		if (isPendingUpdate) {
-			return;
-		}
+	const updateCptEntry = useCallback(async () => {
+		if (isPendingUpdate || !cptId) return;
 
 		setIsPendingUpdate(true);
 		try {
-			const cptName = "ani_tab_control";
+			const cptName = "animated_tabcontrol";
 			const postCategory = "postType";
-			const childLabels = innerBlocks?.map(block => block.attributes.cptId);
+			const childLabels = innerBlocks?.map(block => block.attributes?.cptId);
 			const updatedPostReccord = {
 				id: cptId,
 				meta: {
@@ -89,79 +94,77 @@ export default function Edit( { attributes, setAttributes, clientId  } ) {
 				}
 			};
 
-			const updatedPost = await saveEntityRecord(postCategory, cptName, updatedPostReccord);
+			await saveEntityRecord(postCategory, cptName, updatedPostReccord);
+			setAttributes({ tabIds: childLabels });
 
 		} catch (error) {
 			console.error("Fehler beim Aktualisieren des CPT:", error);
 		} finally {
 			setIsPendingUpdate(false);
 		}
-	}
+	}, [cptId, isPendingUpdate, innerBlocks, attributes, initialIndex, saveEntityRecord, setAttributes]);
 
 	useCptSync({
 		clientId,
 		attributes,
 		setAttributes,
 		watchedAttributes,
-		externalDependencies: [innerBlocks],
+		externalDependencies: [innerBlocks.length],
 		createCallback: createCptEntry,
 		updateCallback: updateCptEntry,
 		debounceDelay: 3000
 	});
 
-	const handleAttributeChange = (attribute, value) => {
-		setAttributes({ [attribute]: value });
+	const handleTabClick = (tabName) => {
+		setAttributes({ activeTab: tabName });
 	};
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'ani-tab-control-block' ) }>
-
+				<PanelBody title={__('Settings', 'ani-tab-control-block')}>
+					<RangeControl
+						label={__('Erster Tab', 'ani-tab-control-block')}
+						value={initialIndex}
+						onChange={(value) => setAttributes({ initialIndex: value })}
+						min={0}
+						max={Math.max(0, innerBlocks.length - 1)}
+					/>
 					<TextareaControl
-						label={ __(
-							'Additional CSS for Element. No selectors!',
-							'ani-tab-control-block'
-						) }
+						label={__('Additional CSS for Element. No selectors!', 'ani-tab-control-block')}
 						help="CSS-Styles"
-						value={ style.css }
-						onChange={ ( value ) => setAttributes( { style: {css: value }} ) }
+						value={style.css}
+						onChange={(value) => setAttributes({ style: { css: value } })}
 					/>
 				</PanelBody>
 			</InspectorControls>
 
 			<div {...blockProps}>
-				<TabPanel
-					className="my-tab-panel"
-					activeClass="active-tab"
-					tabs={tabs}
-					onSelect={(name) => handleAttributeChange("activeTab", {name})}
-				>
-					{( tab ) => {
-						return (
-							<div className="tab-content-preview">
-								<InnerBlocks
-									template={[['nextpress-block/animated-tab']]}
-									templateLock={false}
-									allowedBlocks={['nextpress-block/animated-tab']}
-									renderAppender={() => <InnerBlocks.ButtonBlockAppender/>}
-									className={`wp-block-ani-tab-control`}
-								/>
-							</div>
-						)
-					}}
-				</TabPanel>
+				<div className="np-tab-panel">
+					{tabs.length > 0 && (
+						<div className="np-tab-buttons">
+							{tabs.map((tab, index) => (
+								<button
+									key={tab.name || index}
+									type="button"
+									className={`np-tab-button ${currentActiveTab === tab.name ? 'is-active' : ''}`}
+									onClick={() => handleTabClick(tab.name)}
+								>
+									{tab.title}
+								</button>
+							))}
+						</div>
+					)}
+					<div className="np-tab-content">
+						<InnerBlocks
+							template={[['nextpress-block/animated-tab']]}
+							templateLock={false}
+							allowedBlocks={['nextpress-block/animated-tab']}
+							renderAppender={() => <InnerBlocks.ButtonBlockAppender />}
+						/>
+					</div>
+				</div>
 			</div>
-			{tabs.length === 0 && (
-				<InnerBlocks
-					template={[['nextpress-block/animated-tab']]}
-					templateLock={false}
-					allowedBlocks={['nextpress-block/animated-tab']}
-					renderAppender={() => <InnerBlocks.ButtonBlockAppender/>}
-					className={`wp-block-ani-tab-control`}
-				/>
-			)}
-
 		</>
 	);
 }
