@@ -14,6 +14,9 @@ Das Theme sollte mindestens folgende Dateien enthalten:
 - `style.css` (mit Theme-Header)
 - `index.php`
 - `functions.php`
+- `templates/nextpress.php`
+
+Das Template ist wichtig, da nur Seiten mit diesem Template von der Next.js App ausgelesen werden
 
 ## Minimales Beispiel-Theme
 

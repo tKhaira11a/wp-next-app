@@ -2,7 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import Edit from './edit';
 import save from './save';
 import metadata from './block.json';
-import iconImage from '../../block-icon.png';
+import iconImage from '../../assets/block-icon.png';
 import './editor.scss';
 
 registerBlockType( metadata.name, {

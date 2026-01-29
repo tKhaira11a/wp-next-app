@@ -7,7 +7,7 @@ import { store as blockEditorStore } from '@wordpress/block-editor';
 import {Button, ColorPicker, PanelBody, SelectControl, TextareaControl, ToggleControl} from "@wordpress/components";
 import {__} from "@wordpress/i18n";
 import {serialize} from "@wordpress/blocks";
-import dummyBackground from '../../dummy-background.jpg';
+import dummyBackground from '../../assets/dummy-background.jpg';
 import {useCptSync} from "../hooks/useCptSync";
 
 export default function Edit({ attributes, setAttributes, clientId }) {

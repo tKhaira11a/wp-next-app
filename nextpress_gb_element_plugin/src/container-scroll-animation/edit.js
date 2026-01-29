@@ -14,7 +14,7 @@ import {
 } from "@wordpress/components";
 import {__} from "@wordpress/i18n";
 import { serialize } from '@wordpress/blocks';
-import dummyBackground from '../../dummy-background.jpg';
+import dummyBackground from '../../assets/dummy-background.jpg';
 import {edit} from "@wordpress/icons";
 import {useCptSync} from "../hooks/useCptSync";
 

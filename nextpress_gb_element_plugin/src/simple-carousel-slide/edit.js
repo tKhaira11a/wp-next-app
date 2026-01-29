@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from 'react';
 import './editor.scss';
 import {useDispatch} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
-import dummyBackground from '../../dummy-background.jpg';
+import dummyBackground from '../../assets/dummy-background.jpg';
 import {edit} from "@wordpress/icons";
 import {useCptSync} from "../hooks/useCptSync";
 

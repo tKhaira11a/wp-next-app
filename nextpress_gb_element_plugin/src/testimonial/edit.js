@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from 'react';
 import './editor.scss';
 import {useDispatch} from "@wordpress/data";
 import { v4 as uuidv4 } from 'uuid';
-import dummyCardImg from '../../dummy_card_img.jpg';
+import dummyCardImg from '../../assets/dummy_card_img.jpg';
 import {edit} from "@wordpress/icons";
 import {useCptSync} from "../hooks/useCptSync";
 

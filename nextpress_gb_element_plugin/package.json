@@ -9,9 +9,10 @@
 		"CPTs",
 		"build",
 		"NextPress-GB-Components.php",
-		"register_cpts.php",
+		"CPTs/register_cpts.php",
+		"CPTs/cpt_dictionary.php",
 		"README.md",
-		"block-icon.png"
+		"assets/block-icon.png"
 	],
 	"scripts": {
 		"build": "wp-scripts build",

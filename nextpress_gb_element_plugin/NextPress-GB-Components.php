@@ -1,17 +1,19 @@
 <?php
 /**
  * Plugin Name:       NextPress-GB-Components
- * Description:       Package of Nextcomponents for Gutenberg Editor.
- * Version:           0.2.0
+ * Description:       Package of wp-next-app components for Gutenberg Editor.
+ * Version:           1.0.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
- * Author:            Tarik Khairalla
+ * Author:            Tarik Khairalla - www.khairalla-code.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       nextpress-gb-components
  *
  * @package           nextpress-block
  */
+
+require_once(__DIR__.'/CPTs/register_cpts.php');
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -112,7 +114,6 @@ class CAC_Custom_CSS_Plugin {
 	}
 }
 
-require_once(__DIR__.'/register_cpts.php');
 
 
 function create_block_nextpress_components_init() {
