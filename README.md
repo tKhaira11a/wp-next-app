@@ -1,6 +1,6 @@
 # WordPress + Next.js Headless Stack
 
-A fully automated Docker setup for a headless WordPress instance with Next.js frontend.
+A fully automated Docker setup combining a headless WordPress backend, Next.js frontend, and fully integrated Gutenberg Blocks for content management.
 
 ## 🏗️ Architecture
 
